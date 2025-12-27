@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { MaintenanceRequest } from "@/types/maintenance";
+import { type MaintenanceRequest } from "@/types/maintenance";
 import { maintenanceService } from "@/services/maintenance.service";
 import { KanbanBoard } from "@/components/kanban/KanbanBoard";
 import { Loader } from "@/components/common/Loader";

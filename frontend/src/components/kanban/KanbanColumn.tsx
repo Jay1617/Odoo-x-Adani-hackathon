@@ -1,6 +1,6 @@
 import { Droppable } from "@hello-pangea/dnd";
 import { KanbanCard } from "./KanbanCard";
-import { MaintenanceRequest } from "@/types/maintenance";
+import { type MaintenanceRequest } from "@/types/maintenance";
 import { STAGE_LABELS, STAGE_COLORS } from "@/utils/constants";
 import { cn } from "@/lib/utils";
 

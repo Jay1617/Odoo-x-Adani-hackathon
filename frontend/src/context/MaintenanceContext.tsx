@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, type ReactNode } from "react";
-import { MaintenanceRequest } from "@/types/maintenance";
+import {type MaintenanceRequest } from "@/types/maintenance";
 import { maintenanceService } from "@/services/maintenance.service";
 
 interface MaintenanceContextType {

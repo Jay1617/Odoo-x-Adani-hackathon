@@ -17,7 +17,7 @@ export const PageWrapper = ({ children }: PageWrapperProps) => {
       <div
         className={cn(
           "flex flex-1 flex-col transition-all duration-300",
-          sidebarOpen && "lg:ml-64"
+          sidebarOpen ? "lg:ml-64" : "lg:ml-0"
         )}
       >
         <Header />
