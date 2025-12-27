@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import colors from "colors";
 import cookieParser from "cookie-parser";
 import compression from "compression";
 import helmet from "helmet";
