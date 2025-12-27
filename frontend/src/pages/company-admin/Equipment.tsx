@@ -1,0 +1,132 @@
+import { useEffect, useState } from "react";
+import { Equipment } from "@/types/equipment";
+import { equipmentService } from "@/services/equipment.service";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Loader } from "@/components/common/Loader";
+import { EmptyState } from "@/components/common/EmptyState";
+import { Plus, Wrench, Search } from "lucide-react";
+import { formatDate } from "@/utils/date";
+import { Input } from "@/components/ui/input";
+import { useDebounce } from "@/hooks/useDebounce";
+import { toast } from "react-hot-toast";
+import { Link } from "react-router-dom";
+
+export const EquipmentPage = () => {
+  const [equipment, setEquipment] = useState<Equipment[]>([]);
+  const [filteredEquipment, setFilteredEquipment] = useState<Equipment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearch = useDebounce(searchTerm, 300);
+
+  useEffect(() => {
+    fetchEquipment();
+  }, []);
+
+  useEffect(() => {
+    if (debouncedSearch) {
+      const filtered = equipment.filter(
+        (eq) =>
+          eq.name.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+          eq.serialNumber.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+          eq.location.toLowerCase().includes(debouncedSearch.toLowerCase())
+      );
+      setFilteredEquipment(filtered);
+    } else {
+      setFilteredEquipment(equipment);
+    }
+  }, [debouncedSearch, equipment]);
+
+  const fetchEquipment = async () => {
+    try {
+      setLoading(true);
+      const data = await equipmentService.getAll();
+      setEquipment(data);
+      setFilteredEquipment(data);
+    } catch (error) {
+      toast.error("Failed to fetch equipment");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader size="lg" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Equipment</h1>
+          <p className="text-muted-foreground">Manage all company assets</p>
+        </div>
+        <Button>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Equipment
+        </Button>
+      </div>
+
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search by name, serial number, or location..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-10"
+        />
+      </div>
+
+      {filteredEquipment.length === 0 ? (
+        <EmptyState
+          icon={Wrench}
+          title="No equipment found"
+          description={searchTerm ? "Try adjusting your search" : "Get started by adding your first equipment"}
+          action={{ label: "Add Equipment", onClick: () => {} }}
+        />
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {filteredEquipment.map((eq) => (
+            <Card key={eq.id} className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <div className="flex items-start justify-between">
+                  <CardTitle className="text-lg">{eq.name}</CardTitle>
+                  <Badge variant={eq.status === "active" ? "default" : "secondary"}>
+                    {eq.status}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 text-sm">
+                  <p className="text-muted-foreground">Serial: {eq.serialNumber}</p>
+                  <p className="text-muted-foreground">Location: {eq.location}</p>
+                  {eq.department && (
+                    <p className="text-muted-foreground">Department: {eq.department}</p>
+                  )}
+                  {eq.employeeName && (
+                    <p className="text-muted-foreground">Assigned to: {eq.employeeName}</p>
+                  )}
+                  <p className="text-muted-foreground">Team: {eq.maintenanceTeamName}</p>
+                  <p className="text-xs text-muted-foreground">
+                    Purchased: {formatDate(eq.purchaseDate)}
+                  </p>
+                  <Link to={`/equipment/${eq.id}`}>
+                    <Button variant="outline" size="sm" className="w-full mt-2">
+                      View Details
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+

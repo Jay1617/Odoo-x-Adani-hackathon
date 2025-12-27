@@ -1,11 +1,14 @@
-import { Button } from "@/components/ui/button"
+import { BrowserRouter } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import { AppRoutes } from "@/routes/AppRoutes";
 
 function App() {
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center">
-      <Button>Click me</Button>
-    </div>
-  )
+    <BrowserRouter>
+      <AppRoutes />
+      <Toaster position="top-right" />
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
