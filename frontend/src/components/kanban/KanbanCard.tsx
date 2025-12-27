@@ -44,7 +44,7 @@ export const KanbanCard = ({ request, index, onClick }: KanbanCardProps) => {
                 </p>
               </div>
               {overdue && (
-                <AlertCircle className="h-4 w-4 text-red-500 flex-shrink-0" />
+                <AlertCircle className="h-4 w-4 text-red-500 shrink-0" />
               )}
             </div>
 

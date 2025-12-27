@@ -4,7 +4,7 @@ import { companyService } from "@/services/company.service";
 import { equipmentService } from "@/services/equipment.service";
 import { maintenanceService } from "@/services/maintenance.service";
 import { Loader } from "@/components/common/Loader";
-import { Building2, Wrench, ClipboardList, Shield, Activity } from "lucide-react";
+import { Building2, Wrench, ClipboardList, Shield} from "lucide-react";
 
 export const MainAdminDashboard = () => {
   const [stats, setStats] = useState({

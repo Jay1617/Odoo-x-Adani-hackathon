@@ -60,7 +60,7 @@ export const TeamsPage = () => {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {teams.map((team) => (
-            <Card key={team.id}>
+            <Card key={team._id}>
               <CardHeader>
                 <CardTitle>{team.name}</CardTitle>
               </CardHeader>
@@ -72,7 +72,7 @@ export const TeamsPage = () => {
                   <p className="text-sm font-medium">Members ({team.members.length})</p>
                   <div className="flex flex-wrap gap-2">
                     {team.members.map((member) => (
-                      <div key={member.id} className="flex items-center gap-2">
+                      <div key={member._id} className="flex items-center gap-2">
                         <Avatar className="h-8 w-8">
                           <AvatarFallback>{member.name.charAt(0).toUpperCase()}</AvatarFallback>
                         </Avatar>

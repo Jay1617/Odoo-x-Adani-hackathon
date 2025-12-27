@@ -33,6 +33,7 @@ export interface MaintenanceRequest {
       name: string;
       email: string;
   };
+    stage?: string;
 
   description?: string;
   priority: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";

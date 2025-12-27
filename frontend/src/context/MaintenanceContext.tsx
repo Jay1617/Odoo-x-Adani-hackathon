@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useContext, useState, type ReactNode } from "react";
 import {type MaintenanceRequest } from "@/types/maintenance";
 import { maintenanceService } from "@/services/maintenance.service";
 
@@ -29,7 +29,11 @@ export const MaintenanceProvider = ({ children }: { children: ReactNode }) => {
 
   const updateRequest = async (id: number, data: Partial<MaintenanceRequest>) => {
     try {
-      await maintenanceService.update(id, data);
+      const updateData = {
+        ...data,
+        equipmentId: typeof data.equipmentId === 'string' ? data.equipmentId : data.equipmentId?._id,
+      };
+      await maintenanceService.update(String(id), updateData);
       await fetchRequests();
     } catch (error) {
       console.error("Failed to update request:", error);

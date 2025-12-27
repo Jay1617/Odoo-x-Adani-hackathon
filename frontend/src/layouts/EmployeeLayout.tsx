@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { type ReactNode } from "react";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 
 interface EmployeeLayoutProps {

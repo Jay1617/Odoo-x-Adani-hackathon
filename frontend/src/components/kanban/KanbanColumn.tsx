@@ -5,14 +5,14 @@ import { STAGE_LABELS, STAGE_COLORS } from "@/utils/constants";
 import { cn } from "@/lib/utils";
 
 interface KanbanColumnProps {
-  stage: MaintenanceRequest["stage"];
+  stage: Exclude<MaintenanceRequest["stage"], undefined>;
   requests: MaintenanceRequest[];
   onCardClick?: (request: MaintenanceRequest) => void;
 }
 
 export const KanbanColumn = ({ stage, requests, onCardClick }: KanbanColumnProps) => {
   return (
-    <div className="flex flex-col h-full min-w-[300px]">
+    <div className="flex flex-col h-full min-w-75">
       <div className={cn("p-3 rounded-t-lg font-semibold text-sm", STAGE_COLORS[stage])}>
         <div className="flex items-center justify-between">
           <span>{STAGE_LABELS[stage]}</span>
@@ -32,7 +32,7 @@ export const KanbanColumn = ({ stage, requests, onCardClick }: KanbanColumnProps
           >
             {requests.map((request, index) => (
               <KanbanCard
-                key={request.id}
+                key={request._id}
                 request={request}
                 index={index}
                 onClick={() => onCardClick?.(request)}

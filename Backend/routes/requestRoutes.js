@@ -5,6 +5,7 @@ import {
   getRequestById,
   updateRequest,
   deleteRequest,
+  getDashboardStats,
 } from "../controllers/requestController.js";
 import { authenticate } from "../middleware/auth.js";
 

@@ -14,12 +14,9 @@ import { Loader } from "@/components/common/Loader";
 import { EmptyState } from "@/components/common/EmptyState";
 import { Plus, Users, Search, UserPlus, Wrench, Building2, User as UserIcon, Mail, Phone } from "lucide-react";
 import { toast } from "react-hot-toast";
-import { useAuth } from "@/hooks/useAuth";
-import { api } from "@/services/api";
 import type { Role } from "@/types/user";
 
 export const UsersPage = () => {
-  const { user: currentUser } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -90,7 +87,10 @@ export const UsersPage = () => {
     setSubmitting(true);
 
     try {
-      await employeeService.create(formData);
+      await employeeService.create({
+        ...formData,
+        role: formData.role as "EMPLOYEE" | "MAINTENANCE_TEAM"
+      });
       toast.success("Employee created successfully");
       setDialogOpen(false);
       setFormData({

@@ -55,7 +55,9 @@ export const TeamTasksPage = () => {
   const handleClaimTask = async (requestId: string) => {
       if (!user) return;
       try {
-          await maintenanceService.update(requestId, { assignedTo: user.id });
+          const request = requests.find(r => r._id === requestId);
+          if (!request) return;
+          await maintenanceService.update(requestId, { assignedTo: user.id, status: request.status });
           toast.success("Task assigned to you");
           // Refresh
           let teamId: string | undefined;

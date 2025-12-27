@@ -1,5 +1,5 @@
 import { api } from "./api";
-import type { User, RegisterData } from "@/types/user";
+import type { Role, User } from "@/types/user";
 
 export interface LoginCredentials {
   email_id: string;
