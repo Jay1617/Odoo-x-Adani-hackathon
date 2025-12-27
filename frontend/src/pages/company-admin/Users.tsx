@@ -160,20 +160,20 @@ export const UsersPage = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Users className="h-8 w-8" />
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold flex items-center gap-3">
+            <Users className="h-8 w-8 text-primary" />
             Employee Management
           </h1>
-          <p className="text-muted-foreground">Manage employees and assign them to maintenance categories</p>
+          <p className="text-muted-foreground text-base">Manage employees and assign them to maintenance categories</p>
         </div>
-        <Button onClick={() => setDialogOpen(true)} className="bg-black dark:bg-white text-white dark:text-black">
+        <Button onClick={() => setDialogOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
           Add User
         </Button>
       </div>
 
-      <div className="relative">
+      <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder="Search by name or email..."
@@ -191,23 +191,23 @@ export const UsersPage = () => {
           action={{ label: "Add User", onClick: () => setDialogOpen(true) }}
         />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredUsers.map((user) => {
             const RoleIcon = getRoleIcon(user.role);
             return (
-              <Card key={(user as any)._id} className="hover:shadow-lg transition-shadow">
+              <Card key={(user as any)._id} className="hover:shadow-md transition-all duration-200">
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                      <Avatar className="h-12 w-12">
-                        <AvatarFallback className="bg-black dark:bg-white text-white dark:text-black">
+                      <Avatar className="h-12 w-12 border-2 border-primary/20">
+                        <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
                           {user.name.charAt(0).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div>
                         <CardTitle className="text-lg">{user.name}</CardTitle>
-                        <div className="flex gap-2 mt-1">
-                            <Badge className={getRoleBadgeColor(user.role)}>
+                        <div className="flex gap-2 mt-1.5 flex-wrap">
+                            <Badge className={getRoleBadgeColor(user.role)} variant="secondary">
                             <RoleIcon className="h-3 w-3 mr-1" />
                             {user.role.replace("_", " ")}
                             </Badge>
@@ -386,7 +386,7 @@ export const UsersPage = () => {
               <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={submitting} className="bg-black dark:bg-white text-white dark:text-black">
+              <Button type="submit" disabled={submitting}>
                 {submitting ? <Loader /> : "Create User"}
               </Button>
             </div>

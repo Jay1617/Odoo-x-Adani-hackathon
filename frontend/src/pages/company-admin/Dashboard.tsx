@@ -45,65 +45,65 @@ export const CompanyAdminDashboard = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold flex items-center gap-2">
-          <Activity className="h-8 w-8" />
+    <div className="space-y-8">
+      <div className="space-y-1">
+        <h1 className="text-3xl font-bold flex items-center gap-3">
+          <Activity className="h-8 w-8 text-primary" />
           Dashboard
         </h1>
-        <p className="text-muted-foreground">Company Overview & Analytics</p>
+        <p className="text-muted-foreground text-base">Company Overview & Analytics</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-2 hover:shadow-lg transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Equipment</CardTitle>
-            <div className="p-2 rounded-full bg-black dark:bg-white">
-              <Wrench className="h-4 w-4 text-white dark:text-black" />
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="relative overflow-hidden border">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Equipment</CardTitle>
+            <div className="p-2.5 rounded-lg bg-primary/10">
+              <Wrench className="h-5 w-5 text-primary" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{stats.equipment}</div>
-            <p className="text-xs text-muted-foreground mt-1">Total assets</p>
+            <div className="text-3xl font-bold mb-1">{stats.equipment}</div>
+            <p className="text-xs text-muted-foreground">Total assets</p>
           </CardContent>
         </Card>
 
-        <Card className="border-2 hover:shadow-lg transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Requests</CardTitle>
-            <div className="p-2 rounded-full bg-black dark:bg-white">
-              <ClipboardList className="h-4 w-4 text-white dark:text-black" />
+        <Card className="relative overflow-hidden border">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Requests</CardTitle>
+            <div className="p-2.5 rounded-lg bg-primary/10">
+              <ClipboardList className="h-5 w-5 text-primary" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{stats.totalRequests}</div>
-            <p className="text-xs text-muted-foreground mt-1">All time</p>
+            <div className="text-3xl font-bold mb-1">{stats.totalRequests}</div>
+            <p className="text-xs text-muted-foreground">All time</p>
           </CardContent>
         </Card>
 
-        <Card className="border-2 hover:shadow-lg transition-shadow border-yellow-200 dark:border-yellow-800">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Open Requests</CardTitle>
-            <div className="p-2 rounded-full bg-yellow-100 dark:bg-yellow-900">
-              <AlertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+        <Card className="relative overflow-hidden border border-amber-200 dark:border-amber-900/50">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Open Requests</CardTitle>
+            <div className="p-2.5 rounded-lg bg-amber-100 dark:bg-amber-900/30">
+              <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{stats.openRequests}</div>
-            <p className="text-xs text-muted-foreground mt-1">Requires attention</p>
+            <div className="text-3xl font-bold mb-1 text-amber-600 dark:text-amber-400">{stats.openRequests}</div>
+            <p className="text-xs text-muted-foreground">Requires attention</p>
           </CardContent>
         </Card>
 
-        <Card className="border-2 hover:shadow-lg transition-shadow border-green-200 dark:border-green-800">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Completed</CardTitle>
-            <div className="p-2 rounded-full bg-green-100 dark:bg-green-900">
-              <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+        <Card className="relative overflow-hidden border border-emerald-200 dark:border-emerald-900/50">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Completed</CardTitle>
+            <div className="p-2.5 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
+              <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{stats.completedRequests}</div>
-            <p className="text-xs text-muted-foreground mt-1">Successfully resolved</p>
+            <div className="text-3xl font-bold mb-1 text-emerald-600 dark:text-emerald-400">{stats.completedRequests}</div>
+            <p className="text-xs text-muted-foreground">Successfully resolved</p>
           </CardContent>
         </Card>
       </div>

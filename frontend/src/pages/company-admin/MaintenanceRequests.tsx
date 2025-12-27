@@ -4,7 +4,7 @@ import { maintenanceService } from "@/services/maintenance.service";
 import { KanbanBoard } from "@/components/kanban/KanbanBoard";
 import { Loader } from "@/components/common/Loader";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, ClipboardList } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 import { useSearchParams } from "react-router-dom";
@@ -49,9 +49,12 @@ export const MaintenanceRequestsPage = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Maintenance Requests</h1>
-          <p className="text-muted-foreground">Track and manage all maintenance requests</p>
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold flex items-center gap-3">
+            <ClipboardList className="h-8 w-8 text-primary" />
+            Maintenance Requests
+          </h1>
+          <p className="text-muted-foreground text-base">Track and manage all maintenance requests</p>
         </div>
         <Button>
           <Plus className="h-4 w-4 mr-2" />

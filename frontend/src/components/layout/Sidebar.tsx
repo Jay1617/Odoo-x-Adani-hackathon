@@ -84,14 +84,14 @@ export const Sidebar = () => {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed left-0 top-0 z-50 h-full w-64 bg-sidebar border-r border-sidebar-border transition-transform duration-300 lg:translate-x-0",
+          "fixed left-0 top-0 z-50 h-full w-64 bg-sidebar border-r border-sidebar-border transition-transform duration-300 lg:translate-x-0 shadow-lg",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         <div className="flex h-full flex-col">
           {/* Header */}
-          <div className="flex h-16 items-center justify-between border-b border-sidebar-border px-4">
-            <h1 className="text-lg font-bold text-sidebar-foreground">GearGuard</h1>
+          <div className="flex h-16 items-center justify-between border-b border-sidebar-border px-4 bg-sidebar/50">
+            <h1 className="text-lg font-bold text-sidebar-foreground tracking-tight">GearGuard</h1>
             <Button
               variant="ghost"
               size="icon"
@@ -117,13 +117,13 @@ export const Sidebar = () => {
                     }
                   }}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
                     isActive
-                      ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                      : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+                      ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm"
+                      : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground hover:translate-x-0.5"
                   )}
                 >
-                  <Icon className="h-5 w-5" />
+                  <Icon className="h-4 w-4" />
                   {item.label}
                 </Link>
               );
@@ -131,16 +131,16 @@ export const Sidebar = () => {
           </nav>
 
           {/* User info */}
-          <div className="border-t border-sidebar-border p-4">
+          <div className="border-t border-sidebar-border p-4 bg-sidebar/50">
             <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sidebar-primary text-sidebar-primary-foreground">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-sidebar-primary text-sidebar-primary-foreground font-semibold shadow-sm">
                 {user.name.charAt(0).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-sidebar-foreground truncate">
                   {user.name}
                 </p>
-                <p className="text-xs text-sidebar-foreground/70 truncate">{user.email_id}</p>
+                <p className="text-xs text-sidebar-foreground/60 truncate">{user.email_id}</p>
               </div>
             </div>
           </div>

@@ -21,10 +21,14 @@ export const EmptyState = ({
   className,
 }: EmptyStateProps) => {
   return (
-    <div className={cn("flex flex-col items-center justify-center py-12 text-center", className)}>
-      {Icon && <Icon className="h-12 w-12 text-muted-foreground mb-4" />}
+    <div className={cn("flex flex-col items-center justify-center py-16 text-center", className)}>
+      {Icon && (
+        <div className="mb-4 p-4 rounded-full bg-muted">
+          <Icon className="h-10 w-10 text-muted-foreground" />
+        </div>
+      )}
       <h3 className="text-lg font-semibold mb-2">{title}</h3>
-      {description && <p className="text-sm text-muted-foreground mb-4 max-w-sm">{description}</p>}
+      {description && <p className="text-sm text-muted-foreground mb-6 max-w-sm">{description}</p>}
       {action && (
         <Button onClick={action.onClick} variant="default">
           {action.label}

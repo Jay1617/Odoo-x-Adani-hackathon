@@ -110,12 +110,12 @@ export const CategoriesPage = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Wrench className="h-8 w-8" />
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold flex items-center gap-3">
+            <Wrench className="h-8 w-8 text-primary" />
             Maintenance Categories
           </h1>
-          <p className="text-muted-foreground">Manage maintenance departments and assign employees</p>
+          <p className="text-muted-foreground text-base">Manage maintenance departments and assign employees</p>
         </div>
         <Button
           onClick={() => {
@@ -123,14 +123,13 @@ export const CategoriesPage = () => {
             setFormData({ name: "", description: "", maxEmployees: 0 });
             setDialogOpen(true);
           }}
-          className="bg-black dark:bg-white text-white dark:text-black"
         >
           <Plus className="h-4 w-4 mr-2" />
           Add Category
         </Button>
       </div>
 
-      <div className="relative">
+      <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder="Search categories..."
@@ -148,48 +147,46 @@ export const CategoriesPage = () => {
           action={{ label: "Add Category", onClick: () => setDialogOpen(true) }}
         />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredCategories.map((category) => (
-            <Card key={category.id} className="hover:shadow-lg transition-shadow">
+            <Card key={category.id} className="hover:shadow-md transition-all duration-200">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <Wrench className="h-5 w-5" />
+                    <CardTitle className="text-lg flex items-center gap-2 mb-1">
+                      <Wrench className="h-5 w-5 text-primary" />
                       {category.name}
                     </CardTitle>
                     {category.description && (
-                      <p className="text-sm text-muted-foreground mt-1">{category.description}</p>
+                      <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{category.description}</p>
                     )}
                   </div>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleEdit(category)}
-                      className="h-8 w-8"
-                    >
-                      <Settings className="h-4 w-4" />
-                    </Button>
-                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleEdit(category)}
+                    className="h-8 w-8"
+                  >
+                    <Settings className="h-4 w-4" />
+                  </Button>
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground flex items-center gap-2">
                       <Users className="h-4 w-4" />
                       Assigned Employees
                     </span>
-                    <Badge variant="default">
+                    <Badge variant="default" className="font-semibold">
                       {category.assignedEmployees?.length || 0}
                       {category.maxEmployees > 0 && ` / ${category.maxEmployees}`}
                     </Badge>
                   </div>
                   {category.maxEmployees > 0 && (
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
                       <div
-                        className="bg-black dark:bg-white h-2 rounded-full transition-all"
+                        className="bg-primary h-2 rounded-full transition-all duration-500"
                         style={{
                           width: `${Math.min(
                             ((category.assignedEmployees?.length || 0) / category.maxEmployees) * 100,
@@ -262,7 +259,7 @@ export const CategoriesPage = () => {
               <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={submitting} className="bg-black dark:bg-white text-white dark:text-black">
+              <Button type="submit" disabled={submitting}>
                 {submitting ? <Loader /> : editingCategory ? "Update" : "Create"}
               </Button>
             </div>

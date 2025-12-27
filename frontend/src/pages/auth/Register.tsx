@@ -101,15 +101,15 @@ export const Register = () => {
   ];
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-4">
-      <Card className="w-full max-w-2xl shadow-xl border-2">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-muted/20 to-background p-4 py-8">
+      <Card className="w-full max-w-2xl shadow-xl border">
         <CardHeader className="text-center space-y-4 pb-6">
           <div className="flex justify-center">
-            <div className="rounded-full bg-black dark:bg-white p-3">
-              <Shield className="h-8 w-8 text-white dark:text-black" />
+            <div className="rounded-full bg-primary p-3 shadow-md">
+              <Shield className="h-8 w-8 text-primary-foreground" />
             </div>
           </div>
-          <CardTitle className="text-3xl font-bold text-black dark:text-white">Create Account</CardTitle>
+          <CardTitle className="text-3xl font-bold">Create Account</CardTitle>
           <CardDescription className="text-base">Join GearGuard Maintenance Tracker</CardDescription>
         </CardHeader>
         <CardContent>
@@ -176,10 +176,10 @@ export const Register = () => {
                       key={option.value}
                       type="button"
                       onClick={() => setFormData({ ...formData, role: option.value as Role })}
-                      className={`p-4 border-2 rounded-lg text-left transition-all ${
+                      className={`p-4 border-2 rounded-lg text-left transition-all duration-200 ${
                         isSelected
-                          ? "border-black dark:border-white bg-black dark:bg-white text-white dark:text-black"
-                          : "border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600"
+                          ? "border-primary bg-primary text-primary-foreground shadow-md"
+                          : "border-border hover:border-primary/50 hover:bg-muted/50"
                       }`}
                     >
                       <div className="flex items-center gap-2 mb-2">
@@ -195,7 +195,7 @@ export const Register = () => {
 
             {/* Company Selection - Only for EMPLOYEE/MAINTENANCE_TEAM */}
             {formData.role === "EMPLOYEE" && (
-              <div className="space-y-4 p-4 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg">
+              <div className="space-y-4 p-4 border-2 border-dashed border-border rounded-lg bg-muted/30">
                 <h3 className="font-semibold flex items-center gap-2">
                   <Building2 className="h-5 w-5" />
                   Select Company
@@ -223,7 +223,7 @@ export const Register = () => {
 
             {/* Company Details Form - Only for COMPANY_ADMIN */}
             {formData.role === "COMPANY_ADMIN" && (
-              <div className="space-y-4 p-4 border-2 border-black dark:border-white rounded-lg">
+              <div className="space-y-4 p-4 border-2 border-primary rounded-lg bg-muted/30">
                 <h3 className="font-semibold flex items-center gap-2">
                   <Building2 className="h-5 w-5" />
                   Company Details
@@ -352,7 +352,7 @@ export const Register = () => {
               </div>
             </div>
 
-            <Button type="submit" className="w-full h-11 bg-black hover:bg-gray-800 text-white dark:bg-white dark:hover:bg-gray-200 dark:text-black" disabled={loading}>
+            <Button type="submit" className="w-full h-11" disabled={loading}>
               {loading ? (
                 <Loader />
               ) : (
@@ -364,7 +364,7 @@ export const Register = () => {
             </Button>
             <div className="text-center text-sm text-muted-foreground">
               Already have an account?{" "}
-              <Link to="/login" className="font-semibold text-black dark:text-white hover:underline">
+              <Link to="/login" className="font-semibold text-primary hover:underline transition-colors">
                 Sign in here
               </Link>
             </div>

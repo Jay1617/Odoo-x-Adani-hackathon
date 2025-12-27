@@ -25,18 +25,20 @@ export const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-background px-4 lg:px-6">
+    <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 px-4 lg:px-6 shadow-sm">
       <Button variant="ghost" size="icon" onClick={toggleSidebar} className="lg:hidden">
         <Menu className="h-5 w-5" />
       </Button>
 
       <div className="flex-1" />
 
-      <div className="flex items-center gap-4">
-        <span className="text-sm text-muted-foreground hidden sm:inline">
-          {user?.name || "User"}
-        </span>
-        <Button variant="ghost" size="icon" onClick={handleLogout}>
+      <div className="flex items-center gap-3">
+        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted/50">
+          <span className="text-sm font-medium text-foreground">
+            {user?.name || "User"}
+          </span>
+        </div>
+        <Button variant="ghost" size="icon" onClick={handleLogout} className="hover:bg-destructive/10 hover:text-destructive">
           <LogOut className="h-5 w-5" />
         </Button>
       </div>

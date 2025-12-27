@@ -56,27 +56,39 @@ export const EmployeeDashboard = () => {
   // Render Maintenance Team View
   if (user?.role === "MAINTENANCE_TEAM" && dashboardData) {
       return (
-        <div className="space-y-6">
-          <div>
-            <h1 className="text-3xl font-bold flex items-center gap-2">
-              <Wrench className="h-8 w-8" />
+        <div className="space-y-8">
+          <div className="space-y-1">
+            <h1 className="text-3xl font-bold flex items-center gap-3">
+              <Wrench className="h-8 w-8 text-primary" />
               Maintenance Dashboard
             </h1>
-            <p className="text-muted-foreground">Overview of your maintenance tasks</p>
+            <p className="text-muted-foreground text-base">Overview of your maintenance tasks</p>
           </div>
           
           <div className="grid gap-6 md:grid-cols-3">
-            <Card className="border-l-4 border-blue-500">
-                <CardHeader className="pb-2"><CardTitle className="text-sm">My Active Tasks</CardTitle></CardHeader>
-                <CardContent><div className="text-3xl font-bold">{dashboardData.assignedToMe || 0}</div></CardContent>
+            <Card className="relative overflow-hidden border border-blue-200 dark:border-blue-900/50">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium text-muted-foreground">My Active Tasks</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold mb-1 text-blue-600 dark:text-blue-400">{dashboardData.assignedToMe || 0}</div>
+              </CardContent>
             </Card>
-            <Card className="border-l-4 border-yellow-500">
-                <CardHeader className="pb-2"><CardTitle className="text-sm">Team Unclaimed</CardTitle></CardHeader>
-                <CardContent><div className="text-3xl font-bold">{dashboardData.teamUnassigned || 0}</div></CardContent>
+            <Card className="relative overflow-hidden border border-amber-200 dark:border-amber-900/50">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium text-muted-foreground">Team Unclaimed</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold mb-1 text-amber-600 dark:text-amber-400">{dashboardData.teamUnassigned || 0}</div>
+              </CardContent>
             </Card>
-            <Card className="border-l-4 border-green-500">
-                <CardHeader className="pb-2"><CardTitle className="text-sm">Completed by Me</CardTitle></CardHeader>
-                <CardContent><div className="text-3xl font-bold">{dashboardData.completedByMe || 0}</div></CardContent>
+            <Card className="relative overflow-hidden border border-emerald-200 dark:border-emerald-900/50">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium text-muted-foreground">Completed by Me</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold mb-1 text-emerald-600 dark:text-emerald-400">{dashboardData.completedByMe || 0}</div>
+              </CardContent>
             </Card>
           </div>
 
@@ -113,13 +125,13 @@ export const EmployeeDashboard = () => {
 
   // Render Regular Employee View
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold flex items-center gap-2">
-          <User className="h-8 w-8" />
+    <div className="space-y-8">
+      <div className="space-y-1">
+        <h1 className="text-3xl font-bold flex items-center gap-3">
+          <User className="h-8 w-8 text-primary" />
           Dashboard
         </h1>
-        <div className="flex flex-col md:flex-row md:items-center gap-2 text-muted-foreground mt-2">
+        <div className="flex flex-col md:flex-row md:items-center gap-2 text-muted-foreground">
            <p>Welcome back, <span className="font-semibold text-foreground">{user?.name}</span></p>
            {companyName && (
              <>
@@ -134,42 +146,42 @@ export const EmployeeDashboard = () => {
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
-        <Card className="border-2 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium uppercase tracking-wider text-muted-foreground">My Requests</CardTitle>
-            <div className="p-3 rounded-xl bg-black dark:bg-white shadow-lg">
-              <ClipboardList className="h-5 w-5 text-white dark:text-black" />
+        <Card className="relative overflow-hidden border">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-medium text-muted-foreground">My Requests</CardTitle>
+            <div className="p-2.5 rounded-lg bg-primary/10">
+              <ClipboardList className="h-5 w-5 text-primary" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{dashboardData?.myRequests || 0}</div>
-            <p className="text-xs text-muted-foreground mt-1">Assigned to me</p>
+            <div className="text-3xl font-bold mb-1">{dashboardData?.myRequests || 0}</div>
+            <p className="text-xs text-muted-foreground">Assigned to me</p>
           </CardContent>
         </Card>
 
-        <Card className="border-2 hover:shadow-lg transition-shadow border-yellow-200 dark:border-yellow-800">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Open</CardTitle>
-            <div className="p-2 rounded-full bg-yellow-100 dark:bg-yellow-900">
-              <AlertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+        <Card className="relative overflow-hidden border border-amber-200 dark:border-amber-900/50">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Open</CardTitle>
+            <div className="p-2.5 rounded-lg bg-amber-100 dark:bg-amber-900/30">
+              <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{dashboardData?.openRequests || 0}</div>
-            <p className="text-xs text-muted-foreground mt-1">In progress</p>
+            <div className="text-3xl font-bold mb-1 text-amber-600 dark:text-amber-400">{dashboardData?.openRequests || 0}</div>
+            <p className="text-xs text-muted-foreground">In progress</p>
           </CardContent>
         </Card>
 
-        <Card className="border-2 hover:shadow-lg transition-shadow border-green-200 dark:border-green-800">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Completed</CardTitle>
-            <div className="p-2 rounded-full bg-green-100 dark:bg-green-900">
-              <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+        <Card className="relative overflow-hidden border border-emerald-200 dark:border-emerald-900/50">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Completed</CardTitle>
+            <div className="p-2.5 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
+              <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{dashboardData?.completedRequests || 0}</div>
-            <p className="text-xs text-muted-foreground mt-1">Finished</p>
+            <div className="text-3xl font-bold mb-1 text-emerald-600 dark:text-emerald-400">{dashboardData?.completedRequests || 0}</div>
+            <p className="text-xs text-muted-foreground">Finished</p>
           </CardContent>
         </Card>
       </div>

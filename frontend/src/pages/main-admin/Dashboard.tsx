@@ -45,52 +45,52 @@ export const MainAdminDashboard = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold flex items-center gap-2">
-          <Shield className="h-8 w-8" />
+    <div className="space-y-8">
+      <div className="space-y-1">
+        <h1 className="text-3xl font-bold flex items-center gap-3">
+          <Shield className="h-8 w-8 text-primary" />
           Platform Dashboard
         </h1>
-        <p className="text-muted-foreground">System-wide Overview & Analytics</p>
+        <p className="text-muted-foreground text-base">System-wide Overview & Analytics</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card className="border-2 hover:shadow-lg transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Companies</CardTitle>
-            <div className="p-2 rounded-full bg-black dark:bg-white">
-              <Building2 className="h-4 w-4 text-white dark:text-black" />
+      <div className="grid gap-6 md:grid-cols-3">
+        <Card className="relative overflow-hidden border">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Companies</CardTitle>
+            <div className="p-2.5 rounded-lg bg-primary/10">
+              <Building2 className="h-5 w-5 text-primary" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{stats.companies}</div>
-            <p className="text-xs text-muted-foreground mt-1">Registered companies</p>
+            <div className="text-3xl font-bold mb-1">{stats.companies}</div>
+            <p className="text-xs text-muted-foreground">Registered companies</p>
           </CardContent>
         </Card>
 
-        <Card className="border-2 hover:shadow-lg transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Equipment</CardTitle>
-            <div className="p-2 rounded-full bg-black dark:bg-white">
-              <Wrench className="h-4 w-4 text-white dark:text-black" />
+        <Card className="relative overflow-hidden border">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Equipment</CardTitle>
+            <div className="p-2.5 rounded-lg bg-primary/10">
+              <Wrench className="h-5 w-5 text-primary" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{stats.equipment}</div>
-            <p className="text-xs text-muted-foreground mt-1">Across all companies</p>
+            <div className="text-3xl font-bold mb-1">{stats.equipment}</div>
+            <p className="text-xs text-muted-foreground">Across all companies</p>
           </CardContent>
         </Card>
 
-        <Card className="border-2 hover:shadow-lg transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Maintenance Requests</CardTitle>
-            <div className="p-2 rounded-full bg-black dark:bg-white">
-              <ClipboardList className="h-4 w-4 text-white dark:text-black" />
+        <Card className="relative overflow-hidden border">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Maintenance Requests</CardTitle>
+            <div className="p-2.5 rounded-lg bg-primary/10">
+              <ClipboardList className="h-5 w-5 text-primary" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{stats.requests}</div>
-            <p className="text-xs text-muted-foreground mt-1">All requests</p>
+            <div className="text-3xl font-bold mb-1">{stats.requests}</div>
+            <p className="text-xs text-muted-foreground">All requests</p>
           </CardContent>
         </Card>
       </div>

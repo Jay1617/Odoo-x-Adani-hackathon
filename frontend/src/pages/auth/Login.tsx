@@ -42,15 +42,15 @@ export const Login = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-4">
-      <Card className="w-full max-w-md shadow-xl border-2">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-muted/20 to-background p-4">
+      <Card className="w-full max-w-md shadow-xl border">
         <CardHeader className="text-center space-y-4 pb-6">
           <div className="flex justify-center">
-            <div className="rounded-full bg-black dark:bg-white p-3">
-              <Shield className="h-8 w-8 text-white dark:text-black" />
+            <div className="rounded-full bg-primary p-3 shadow-md">
+              <Shield className="h-8 w-8 text-primary-foreground" />
             </div>
           </div>
-          <CardTitle className="text-3xl font-bold text-black dark:text-white">GearGuard</CardTitle>
+          <CardTitle className="text-3xl font-bold">GearGuard</CardTitle>
           <CardDescription className="text-base">The Ultimate Maintenance Tracker</CardDescription>
         </CardHeader>
         <CardContent>
@@ -85,7 +85,7 @@ export const Login = () => {
                 className="h-11"
               />
             </div>
-            <Button type="submit" className="w-full h-11 bg-black hover:bg-gray-800 text-white dark:bg-white dark:hover:bg-gray-200 dark:text-black" disabled={loading}>
+            <Button type="submit" className="w-full h-11" disabled={loading}>
               {loading ? (
                 <Loader />
               ) : (
@@ -97,7 +97,7 @@ export const Login = () => {
             </Button>
             <div className="text-center text-sm text-muted-foreground">
               Don't have an account?{" "}
-              <Link to="/register" className="font-semibold text-black dark:text-white hover:underline">
+              <Link to="/register" className="font-semibold text-primary hover:underline transition-colors">
                 Register here
               </Link>
             </div>
