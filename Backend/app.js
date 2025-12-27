@@ -6,6 +6,9 @@ import helmet from "helmet";
 import dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
 import userRouter from "./routes/userRoutes.js";
+import companyRouter from "./routes/companyRoutes.js";
+import categoryRouter from "./routes/categoryRoutes.js";
+import employeeRouter from "./routes/employeeRoutes.js";
 
 dotenv.config();
 
@@ -83,6 +86,9 @@ app.get('/api/test', (req, res) => {
 
 // API routes
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/companies", companyRouter);
+app.use("/api/v1/categories", categoryRouter);
+app.use("/api/v1/employees", employeeRouter);
 
 // 404 handler
 app.use((req, res, next) => {

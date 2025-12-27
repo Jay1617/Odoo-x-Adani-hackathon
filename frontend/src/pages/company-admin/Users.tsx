@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { type User } from "@/types/user";
+import { employeeService } from "@/services/employee.service";
+import { categoryService } from "@/services/category.service";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -55,15 +57,11 @@ export const UsersPage = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      // Filter users by current user's company
-      const response = await api.get("/users");
-      const companyUsers = response.data.users.filter(
-        (u: User) => u.companyId === currentUser?.companyId
-      );
-      setUsers(companyUsers);
-      setFilteredUsers(companyUsers);
+      const data = await employeeService.getAll();
+      setUsers(data);
+      setFilteredUsers(data);
     } catch (error: any) {
-      toast.error("Failed to fetch users");
+      toast.error("Failed to fetch employees");
     } finally {
       setLoading(false);
     }
@@ -71,11 +69,10 @@ export const UsersPage = () => {
 
   const fetchTeams = async () => {
     try {
-      // This would fetch maintenance teams - adjust endpoint as needed
-      const response = await api.get("/teams");
-      setTeams(response.data || []);
+      const data = await categoryService.getAll();
+      setTeams(data);
     } catch (error) {
-      console.error("Failed to fetch teams");
+      console.error("Failed to fetch categories");
     }
   };
 
@@ -84,13 +81,8 @@ export const UsersPage = () => {
     setSubmitting(true);
 
     try {
-      const registerData = {
-        ...formData,
-        companyId: currentUser?.companyId,
-        maintenanceTeamId: formData.maintenanceTeamId || undefined,
-      };
-      await api.post("/users/register", registerData);
-      toast.success("User created successfully");
+      await employeeService.create(formData);
+      toast.success("Employee created successfully");
       setDialogOpen(false);
       setFormData({
         name: "",
@@ -102,9 +94,30 @@ export const UsersPage = () => {
       });
       fetchUsers();
     } catch (error: any) {
-      toast.error(error.message || "Failed to create user");
+      toast.error(error.message || "Failed to create employee");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleRoleChange = async (userId: string, newRole: "EMPLOYEE" | "MAINTENANCE_TEAM") => {
+    try {
+      await employeeService.updateRole(userId, newRole);
+      toast.success("Employee role updated successfully");
+      fetchUsers();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to update role");
+    }
+  };
+
+  const handleAssignToCategory = async (employeeId: string, categoryId: string) => {
+    try {
+      await categoryService.assignEmployee(categoryId, employeeId);
+      toast.success("Employee assigned to category successfully");
+      fetchUsers();
+      fetchTeams();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to assign employee");
     }
   };
 
@@ -144,9 +157,9 @@ export const UsersPage = () => {
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <Users className="h-8 w-8" />
-            User Management
+            Employee Management
           </h1>
-          <p className="text-muted-foreground">Manage users and assign them to maintenance teams</p>
+          <p className="text-muted-foreground">Manage employees and assign them to maintenance categories</p>
         </div>
         <Button onClick={() => setDialogOpen(true)} className="bg-black dark:bg-white text-white dark:text-black">
           <Plus className="h-4 w-4 mr-2" />
@@ -210,13 +223,41 @@ export const UsersPage = () => {
                     {user.maintenanceTeamId && (
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Wrench className="h-4 w-4" />
-                        <span>Team Member</span>
+                        <span>Assigned to Category</span>
                       </div>
                     )}
-                    <div className="pt-2">
+                    <div className="pt-2 flex flex-col gap-2">
                       <Badge variant={user.isActive ? "default" : "secondary"}>
                         {user.isActive ? "Active" : "Inactive"}
                       </Badge>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleRoleChange(user.id, user.role === "EMPLOYEE" ? "MAINTENANCE_TEAM" : "EMPLOYEE")}
+                          className="text-xs"
+                        >
+                          Switch to {user.role === "EMPLOYEE" ? "Maintenance" : "Employee"}
+                        </Button>
+                        {user.role === "MAINTENANCE_TEAM" && (
+                          <Select
+                            value={user.maintenanceTeamId || ""}
+                            onChange={(e) => {
+                              if (e.target.value) {
+                                handleAssignToCategory(user.id, e.target.value);
+                              }
+                            }}
+                            className="text-xs h-8"
+                          >
+                            <option value="">Assign to Category</option>
+                            {teams.map((team) => (
+                              <option key={team.id} value={team.id}>
+                                {team.name}
+                              </option>
+                            ))}
+                          </Select>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -233,7 +274,7 @@ export const UsersPage = () => {
               <UserPlus className="h-5 w-5" />
               Add New User
             </DialogTitle>
-            <DialogDescription>Create a new user and assign them to a maintenance team if needed</DialogDescription>
+            <DialogDescription>Create a new employee. You can later assign maintenance team members to categories.</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
@@ -284,30 +325,13 @@ export const UsersPage = () => {
               <Select
                 id="role"
                 value={formData.role}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value as Role })}
+                onChange={(e) => setFormData({ ...formData, role: e.target.value as "EMPLOYEE" | "MAINTENANCE_TEAM" })}
                 required
               >
                 <option value="EMPLOYEE">Employee</option>
                 <option value="MAINTENANCE_TEAM">Maintenance Team</option>
               </Select>
             </div>
-            {formData.role === "MAINTENANCE_TEAM" && (
-              <div className="space-y-2">
-                <Label htmlFor="maintenanceTeamId">Maintenance Team (Optional)</Label>
-                <Select
-                  id="maintenanceTeamId"
-                  value={formData.maintenanceTeamId}
-                  onChange={(e) => setFormData({ ...formData, maintenanceTeamId: e.target.value })}
-                >
-                  <option value="">Select a team</option>
-                  {teams.map((team) => (
-                    <option key={team.id} value={team.id}>
-                      {team.name}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-            )}
             <div className="flex justify-end gap-2 pt-4">
               <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
                 Cancel

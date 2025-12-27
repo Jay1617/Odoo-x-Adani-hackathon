@@ -17,6 +17,7 @@ import { CompanyAdminDashboard } from "@/pages/company-admin/Dashboard";
 import { EquipmentPage } from "@/pages/company-admin/Equipment";
 import { TeamsPage } from "@/pages/company-admin/Teams";
 import { UsersPage } from "@/pages/company-admin/Users";
+import { CategoriesPage } from "@/pages/company-admin/Categories";
 import { MaintenanceRequestsPage } from "@/pages/company-admin/MaintenanceRequests";
 import { PreventiveSchedulePage } from "@/pages/company-admin/PreventiveSchedule";
 import { ReportsPage } from "@/pages/company-admin/Reports";
@@ -64,6 +65,7 @@ export const AppRoutes = () => {
                   <Route path="equipment" element={<EquipmentPage />} />
                   <Route path="teams" element={<TeamsPage />} />
                   <Route path="users" element={<UsersPage />} />
+                  <Route path="categories" element={<CategoriesPage />} />
                   <Route path="maintenance-requests" element={<MaintenanceRequestsPage />} />
                   <Route path="preventive-schedule" element={<PreventiveSchedulePage />} />
                   <Route path="reports" element={<ReportsPage />} />

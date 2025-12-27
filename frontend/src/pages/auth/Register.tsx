@@ -21,6 +21,18 @@ export const Register = () => {
     role: "EMPLOYEE" as Role,
     phone: "",
   });
+  const [companyDetails, setCompanyDetails] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: {
+      street: "",
+      city: "",
+      state: "",
+      postalCode: "",
+      country: "India",
+    },
+  });
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -42,6 +54,12 @@ export const Register = () => {
 
     try {
       const { confirmPassword, ...registerData } = formData;
+      
+      // If COMPANY_ADMIN, include company details
+      if (formData.role === "COMPANY_ADMIN") {
+        (registerData as any).companyDetails = companyDetails;
+      }
+      
       const response = await authService.register(registerData);
       login(response);
       toast.success("Account created successfully");
@@ -62,9 +80,8 @@ export const Register = () => {
   };
 
   const roleOptions = [
-    { value: "COMPANY_ADMIN", label: "Company Admin", icon: Building2, desc: "Manage company equipment and teams" },
-    { value: "MAINTENANCE_TEAM", label: "Maintenance Team", icon: Wrench, desc: "Handle maintenance requests" },
-    { value: "EMPLOYEE", label: "Employee", icon: User, desc: "Create maintenance requests" },
+    { value: "COMPANY_ADMIN", label: "Company Admin", icon: Building2, desc: "Register your company and manage employees" },
+    { value: "EMPLOYEE", label: "Employee", icon: User, desc: "Join as an employee (company admin will assign you)" },
   ];
 
   return (
@@ -134,7 +151,7 @@ export const Register = () => {
                 <Shield className="h-4 w-4" />
                 Role
               </Label>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {roleOptions.map((option) => {
                   const Icon = option.icon;
                   const isSelected = formData.role === option.value;
@@ -159,6 +176,104 @@ export const Register = () => {
                 })}
               </div>
             </div>
+
+            {/* Company Details Form - Only for COMPANY_ADMIN */}
+            {formData.role === "COMPANY_ADMIN" && (
+              <div className="space-y-4 p-4 border-2 border-black dark:border-white rounded-lg">
+                <h3 className="font-semibold flex items-center gap-2">
+                  <Building2 className="h-5 w-5" />
+                  Company Details
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="companyName">Company Name *</Label>
+                    <Input
+                      id="companyName"
+                      value={companyDetails.name}
+                      onChange={(e) => setCompanyDetails({ ...companyDetails, name: e.target.value })}
+                      required
+                      placeholder="Your Company Name"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="companyEmail">Company Email</Label>
+                    <Input
+                      id="companyEmail"
+                      type="email"
+                      value={companyDetails.email}
+                      onChange={(e) => setCompanyDetails({ ...companyDetails, email: e.target.value })}
+                      placeholder="company@example.com"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="companyPhone">Company Phone</Label>
+                    <Input
+                      id="companyPhone"
+                      type="tel"
+                      value={companyDetails.phone}
+                      onChange={(e) => setCompanyDetails({ ...companyDetails, phone: e.target.value })}
+                      placeholder="+1234567890"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="companyCity">City</Label>
+                    <Input
+                      id="companyCity"
+                      value={companyDetails.address.city}
+                      onChange={(e) =>
+                        setCompanyDetails({
+                          ...companyDetails,
+                          address: { ...companyDetails.address, city: e.target.value },
+                        })
+                      }
+                      placeholder="City"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="companyState">State</Label>
+                    <Input
+                      id="companyState"
+                      value={companyDetails.address.state}
+                      onChange={(e) =>
+                        setCompanyDetails({
+                          ...companyDetails,
+                          address: { ...companyDetails.address, state: e.target.value },
+                        })
+                      }
+                      placeholder="State"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="companyPostalCode">Postal Code</Label>
+                    <Input
+                      id="companyPostalCode"
+                      value={companyDetails.address.postalCode}
+                      onChange={(e) =>
+                        setCompanyDetails({
+                          ...companyDetails,
+                          address: { ...companyDetails.address, postalCode: e.target.value },
+                        })
+                      }
+                      placeholder="Postal Code"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="companyStreet">Street Address</Label>
+                  <Input
+                    id="companyStreet"
+                    value={companyDetails.address.street}
+                    onChange={(e) =>
+                      setCompanyDetails({
+                        ...companyDetails,
+                        address: { ...companyDetails.address, street: e.target.value },
+                      })
+                    }
+                    placeholder="Street Address"
+                  />
+                </div>
+              </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">

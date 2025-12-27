@@ -35,8 +35,8 @@ const getNavItems = (role: string): NavItem[] => {
     return [
       { label: "Dashboard", path: "/company-admin/dashboard", icon: LayoutDashboard },
       { label: "Equipment", path: "/company-admin/equipment", icon: Building2 },
-      { label: "Teams", path: "/company-admin/teams", icon: Users },
-      { label: "Users", path: "/company-admin/users", icon: Users },
+      { label: "Employees", path: "/company-admin/users", icon: Users },
+      { label: "Categories", path: "/company-admin/categories", icon: Wrench },
       { label: "Maintenance Requests", path: "/company-admin/maintenance-requests", icon: ClipboardList },
       { label: "Preventive Schedule", path: "/company-admin/preventive-schedule", icon: Calendar },
       { label: "Reports", path: "/company-admin/reports", icon: BarChart3 },

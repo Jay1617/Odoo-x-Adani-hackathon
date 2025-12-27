@@ -16,6 +16,28 @@ export interface RegisterResponse {
   token: string;
 }
 
+export interface RegisterData {
+  name: string;
+  email_id: string;
+  password: string;
+  role: Role;
+  companyId?: string;
+  maintenanceTeamId?: string;
+  phone?: string;
+  companyDetails?: {
+    name: string;
+    email?: string;
+    phone?: string;
+    address?: {
+      street?: string;
+      city?: string;
+      state?: string;
+      postalCode?: string;
+      country?: string;
+    };
+  };
+}
+
 export const authService = {
   register: async (data: RegisterData): Promise<RegisterResponse> => {
     const response = await api.post<{ user: User; token: string }>("/users/register", data);

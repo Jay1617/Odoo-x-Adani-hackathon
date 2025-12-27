@@ -10,11 +10,11 @@ const generateToken = (id) => {
 };
 
 // @desc    Register new user
-// @route   POST /api/users/register
+// @route   POST /api/v1/users/register
 // @access  Public
 export const registerUser = async (req, res) => {
   try {
-    const { name, email_id, password, role, companyId, maintenanceTeamId, phone } = req.body;
+    const { name, email_id, password, role, companyId, maintenanceTeamId, phone, companyDetails } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email_id });
@@ -25,37 +25,81 @@ export const registerUser = async (req, res) => {
       });
     }
 
-    // Hash password
+    // If COMPANY_ADMIN, require company details
+    if (role === 'COMPANY_ADMIN' && !companyDetails) {
+      return res.status(400).json({
+        success: false,
+        message: 'Company details are required for company admin registration'
+      });
+    }
+
+    // Hash password first
     const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS) || 12;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    // Create user
+    // Create user first (without companyId for COMPANY_ADMIN)
     const user = await User.create({
       name,
       email_id,
       password: hashedPassword,
       role,
-      companyId: companyId || null,
+      companyId: role === 'COMPANY_ADMIN' ? null : (companyId || null), // Will set after company creation
       maintenanceTeamId: maintenanceTeamId || null,
       phone
     });
 
+    let finalCompanyId = companyId;
+
+    // If COMPANY_ADMIN, create company after user is created
+    if (role === 'COMPANY_ADMIN' && companyDetails) {
+      const Company = (await import('../Models/company.model.js')).default;
+      
+      // Check if company name already exists
+      const existingCompany = await Company.findOne({ name: companyDetails.name });
+      if (existingCompany) {
+        // Delete the user we just created since company creation failed
+        await User.findByIdAndDelete(user._id);
+        return res.status(400).json({
+          success: false,
+          message: 'Company with this name already exists'
+        });
+      }
+
+      // Create company with user's ID as createdBy
+      const company = await Company.create({
+        name: companyDetails.name,
+        email: companyDetails.email,
+        phone: companyDetails.phone,
+        address: companyDetails.address,
+        createdBy: user._id, // Set user ID as createdBy
+      });
+
+      finalCompanyId = company._id;
+
+      // Update user with companyId
+      user.companyId = finalCompanyId;
+      await user.save();
+    }
+
+    // Refresh user to get updated companyId if it was set
+    const updatedUser = await User.findById(user._id).select('-password');
+
     // Generate token
-    const token = generateToken(user._id);
+    const token = generateToken(updatedUser._id);
 
     res.status(201).json({
       success: true,
       message: 'User registered successfully',
       data: {
         user: {
-          id: user._id,
-          name: user.name,
-          email_id: user.email_id,
-          role: user.role,
-          companyId: user.companyId,
-          maintenanceTeamId: user.maintenanceTeamId,
-          phone: user.phone,
-          isActive: user.isActive
+          id: updatedUser._id,
+          name: updatedUser.name,
+          email_id: updatedUser.email_id,
+          role: updatedUser.role,
+          companyId: updatedUser.companyId,
+          maintenanceTeamId: updatedUser.maintenanceTeamId,
+          phone: updatedUser.phone,
+          isActive: updatedUser.isActive
         },
         token
       }

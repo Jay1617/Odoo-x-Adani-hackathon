@@ -1,29 +1,41 @@
 import { api } from "./api";
 import type { Company } from "@/types/company";
 
+export interface CompanyFormData {
+  name: string;
+  email?: string;
+  phone?: string;
+  address?: {
+    street?: string;
+    city?: string;
+    state?: string;
+    postalCode?: string;
+    country?: string;
+  };
+}
+
 export const companyService = {
   getAll: async (): Promise<Company[]> => {
-    const response = await api.get<Company[]>("/companies");
-    return response.data;
+    const response = await api.get<{ companies: Company[] }>("/companies");
+    return response.data.companies || [];
   },
 
-  getById: async (id: number): Promise<Company> => {
-    const response = await api.get<Company>(`/companies/${id}`);
-    return response.data;
+  getById: async (id: string): Promise<Company> => {
+    const response = await api.get<{ company: Company }>(`/companies/${id}`);
+    return response.data.company;
   },
 
-  create: async (data: Omit<Company, "id" | "createdAt" | "updatedAt">): Promise<Company> => {
-    const response = await api.post<Company>("/companies", data);
-    return response.data;
+  create: async (data: CompanyFormData): Promise<Company> => {
+    const response = await api.post<{ company: Company }>("/companies", data);
+    return response.data.company;
   },
 
-  update: async (id: number, data: Partial<Company>): Promise<Company> => {
-    const response = await api.put<Company>(`/companies/${id}`, data);
-    return response.data;
+  update: async (id: string, data: Partial<CompanyFormData>): Promise<Company> => {
+    const response = await api.put<{ company: Company }>(`/companies/${id}`, data);
+    return response.data.company;
   },
 
-  delete: async (id: number): Promise<void> => {
+  delete: async (id: string): Promise<void> => {
     await api.delete(`/companies/${id}`);
   },
 };
-
