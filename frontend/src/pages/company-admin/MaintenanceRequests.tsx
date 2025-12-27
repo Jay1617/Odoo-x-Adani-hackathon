@@ -7,18 +7,24 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { toast } from "react-hot-toast";
 
+import { useSearchParams } from "react-router-dom";
+
 export const MaintenanceRequestsPage = () => {
   const [requests, setRequests] = useState<MaintenanceRequest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchParams] = useSearchParams();
+  const equipmentId = searchParams.get("equipmentId");
 
   useEffect(() => {
     fetchRequests();
-  }, []);
+  }, [equipmentId]);
 
   const fetchRequests = async () => {
     try {
       setLoading(true);
-      const data = await maintenanceService.getAll();
+      // Pass params if any
+      const params = equipmentId ? { equipmentId } : undefined;
+      const data = await maintenanceService.getAll(params);
       setRequests(data);
     } catch (error) {
       toast.error("Failed to fetch requests");

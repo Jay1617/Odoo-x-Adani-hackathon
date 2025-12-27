@@ -1,6 +1,6 @@
 import { DragDropContext, type DropResult } from "@hello-pangea/dnd";
 import { KanbanColumn } from "./KanbanColumn";
-import { type MaintenanceRequest, type MaintenanceRequestStage } from "@/types/maintenance";
+import { type MaintenanceRequest, type MaintenanceRequestStatus } from "@/types/maintenance";
 import { MAINTENANCE_STAGES } from "@/utils/constants";
 import { maintenanceService } from "@/services/maintenance.service";
 import { toast } from "react-hot-toast";
@@ -12,7 +12,7 @@ interface KanbanBoardProps {
 }
 
 export const KanbanBoard = ({ requests, onUpdate, onCardClick }: KanbanBoardProps) => {
-  const stages: MaintenanceRequestStage[] = [
+  const stages: MaintenanceRequestStatus[] = [
     MAINTENANCE_STAGES.NEW,
     MAINTENANCE_STAGES.IN_PROGRESS,
     MAINTENANCE_STAGES.REPAIRED,
@@ -20,28 +20,32 @@ export const KanbanBoard = ({ requests, onUpdate, onCardClick }: KanbanBoardProp
   ];
 
   const requestsByStage = stages.reduce((acc, stage) => {
-    acc[stage] = requests.filter((r) => r.stage === stage);
+    acc[stage] = requests.filter((r) => r.status === stage);
     return acc;
-  }, {} as Record<MaintenanceRequestStage, MaintenanceRequest[]>);
+  }, {} as Record<MaintenanceRequestStatus, MaintenanceRequest[]>);
 
   const handleDragEnd = async (result: DropResult) => {
     if (!result.destination) return;
 
     const { draggableId, destination } = result;
-    const requestId = parseInt(draggableId);
-    const newStage = destination.droppableId as MaintenanceRequestStage;
+    const newStatus = destination.droppableId as MaintenanceRequestStatus;
 
-    const request = requests.find((r) => r.id === requestId);
-    if (!request || request.stage === newStage) return;
+    // Find request by string ID
+    const request = requests.find((r) => r._id === draggableId);
+    
+    // Check if status is same
+    if (!request || request.status === newStatus) return;
 
     try {
-      await maintenanceService.updateStage(requestId, newStage);
+        const idToUpdate = request._id;
+        // Optimistic update could happen here but let's just wait for API
+      await maintenanceService.updateStatus(idToUpdate, newStatus);
       toast.success("Request updated successfully");
       onUpdate();
 
       // If moved to scrap, mark equipment as scrapped
-      if (newStage === MAINTENANCE_STAGES.SCRAP) {
-        toast.info("Equipment marked as scrapped");
+      if (newStatus === MAINTENANCE_STAGES.SCRAP) {
+        toast("Equipment marked as scrapped", { icon: "ℹ️" });
       }
     } catch (error) {
       toast.error("Failed to update request");
@@ -51,7 +55,7 @@ export const KanbanBoard = ({ requests, onUpdate, onCardClick }: KanbanBoardProp
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="flex gap-4 overflow-x-auto pb-4">
+      <div className="flex gap-4 overflow-x-auto pb-4 h-full">
         {stages.map((stage) => (
           <KanbanColumn
             key={stage}
@@ -64,4 +68,3 @@ export const KanbanBoard = ({ requests, onUpdate, onCardClick }: KanbanBoardProp
     </DragDropContext>
   );
 };
-

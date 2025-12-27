@@ -44,11 +44,22 @@ const getNavItems = (role: string): NavItem[] => {
   }
 
   // Employee & Maintenance Team
-  return [
+  const items: NavItem[] = [
     { label: "Dashboard", path: "/employee/dashboard", icon: LayoutDashboard },
     { label: "My Requests", path: "/employee/my-requests", icon: FileText },
-    { label: "Kanban", path: "/employee/kanban", icon: ClipboardList },
   ];
+
+  if (role === "MAINTENANCE_TEAM") {
+    items.push({ label: "Team Tasks", path: "/employee/team-tasks", icon: ClipboardList });
+    items.push({ label: "Kanban", path: "/employee/kanban", icon: Calendar }); // Kanban usually relevant for team
+  } else {
+     // Normal employee kanban might not be needed or just for their requests? 
+     // Requirement said "Employee & Maintenance Team" share layout. 
+     // Let's keep Kanban as previously defined but maybe clearer to have Team Tasks.
+     items.push({ label: "Kanban", path: "/employee/kanban", icon: ClipboardList });
+  }
+
+  return items;
 };
 
 export const Sidebar = () => {

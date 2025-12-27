@@ -1,20 +1,26 @@
 export interface Equipment {
-  id: number;
+  _id: string; // MongoDB ID is _id usually, but let's map to id if we want, but usually _id
+  id?: string; // Optional for frontend compat if mapped
   name: string;
   serialNumber: string;
   purchaseDate: string;
   warrantyExpiry?: string;
   location: string;
   department?: string;
-  employeeId?: number;
-  employeeName?: string;
-  maintenanceTeamId: number;
-  maintenanceTeamName: string;
-  technicianId?: number;
-  technicianName?: string;
+  assignedTo?: {
+      _id: string;
+      name: string;
+      email: string;
+  }; 
+  maintenanceTeamId?: {
+      _id: string;
+      name: string;
+  };
+  defaultMaintenanceCategory?: string;
   category?: string;
-  status: "active" | "inactive" | "scrapped";
+  status: "ACTIVE" | "INACTIVE" | "SCRAPPED";
   notes?: string;
+  openRequestCount?: number; // From smart button logic
   createdAt: string;
   updatedAt: string;
 }
@@ -26,10 +32,8 @@ export interface EquipmentFormData {
   warrantyExpiry?: string;
   location: string;
   department?: string;
-  employeeId?: number;
-  maintenanceTeamId: number;
-  technicianId?: number;
+  assignedTo?: string; // User ID
+  maintenanceTeamId?: string; // Team ID
   category?: string;
   notes?: string;
 }
-

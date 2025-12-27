@@ -9,6 +9,9 @@ import userRouter from "./routes/userRoutes.js";
 import companyRouter from "./routes/companyRoutes.js";
 import categoryRouter from "./routes/categoryRoutes.js";
 import employeeRouter from "./routes/employeeRoutes.js";
+import equipmentRouter from "./routes/equipmentRoutes.js";
+import maintenanceTeamRouter from "./routes/maintenanceTeamRoutes.js";
+import requestRouter from "./routes/requestRoutes.js";
 
 dotenv.config();
 
@@ -89,6 +92,9 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/companies", companyRouter);
 app.use("/api/v1/categories", categoryRouter);
 app.use("/api/v1/employees", employeeRouter);
+app.use("/api/v1/equipments", equipmentRouter);
+app.use("/api/v1/maintenance-teams", maintenanceTeamRouter);
+app.use("/api/v1/maintenance-requests", requestRouter);
 
 // 404 handler
 app.use((req, res, next) => {

@@ -1,7 +1,6 @@
-// models/MaintenanceRequest.js
 import mongoose from "mongoose";
 
-const MaintenanceRequestSchema = new mongoose.Schema(
+const MaintenanceTeamSchema = new mongoose.Schema(
   {
     companyId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -9,59 +8,27 @@ const MaintenanceRequestSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
-
-    requestedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true, // EMPLOYEE
-      index: true,
-    },
-
-    equipmentId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Equipment",
-      required: true,
-    },
-
-    requestType: {
-      type: String,
-      enum: ["CORRECTIVE", "PREVENTIVE"],
-      required: true,
-    },
-
-    subject: {
+    name: {
       type: String,
       required: true,
       trim: true,
     },
-
     description: {
       type: String,
       trim: true,
     },
-
-    priority: {
-      type: String,
-      enum: ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
-      default: "MEDIUM",
-    },
-
-    preferredDate: {
-      type: Date, // mainly for preventive requests
-    },
-
-    status: {
-      type: String,
-      enum: ["NEW", "APPROVED", "REJECTED", "ASSIGNED"],
-      default: "NEW",
-      index: true,
-    },
-
-    // Link to assignment (created later)
-    assignmentId: {
+    members: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User", // or Employee
+      },
+    ],
+    // The link to categories this team handles?
+    // "Workflow Logic: When a request is created for a specific team, only team members should pick it up."
+    createdBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "MaintenanceAssignment",
-      default: null,
+      ref: "User",
+      required: true,
     },
   },
   {
@@ -69,8 +36,6 @@ const MaintenanceRequestSchema = new mongoose.Schema(
   }
 );
 
-// Helpful indexes
-MaintenanceRequestSchema.index({ companyId: 1, status: 1 });
-MaintenanceRequestSchema.index({ requestedBy: 1, createdAt: -1 });
+MaintenanceTeamSchema.index({ companyId: 1, name: 1 }, { unique: true });
 
-export default mongoose.model("MaintenanceRequest", MaintenanceRequestSchema);
+export default mongoose.model("MaintenanceTeam", MaintenanceTeamSchema);

@@ -38,4 +38,10 @@ export const companyService = {
   delete: async (id: string): Promise<void> => {
     await api.delete(`/companies/${id}`);
   },
+
+  getPublic: async (): Promise<{ _id: string; name: string }[]> => {
+    const response = await api.get<{ companies: { _id: string; name: string }[] }>("/companies/public");
+    // Interceptor unwraps response.data.data to response.data
+    return response.data.companies;
+  },
 };

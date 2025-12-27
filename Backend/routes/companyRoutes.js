@@ -4,11 +4,15 @@ import {
   getAllCompanies,
   getCompanyById,
   updateCompany,
-  deleteCompany
+  deleteCompany,
+  getPublicCompanies
 } from '../controllers/companyController.js';
 import { authenticate, authorize } from '../middleware/auth.js';
 
 const router = express.Router();
+
+// Public routes
+router.get('/public', getPublicCompanies);
 
 // All routes require authentication
 router.use(authenticate);

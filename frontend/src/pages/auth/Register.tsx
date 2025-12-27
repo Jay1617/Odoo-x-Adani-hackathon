@@ -1,15 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { authService } from "@/services/auth.service";
+import { companyService } from "@/services/company.service";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader } from "@/components/common/Loader";
 import { toast } from "react-hot-toast";
-import { UserPlus, Shield, Mail, Lock, User, Phone, Building2, Wrench } from "lucide-react";
+import { UserPlus, Shield, Mail, Lock, User, Phone, Building2 } from "lucide-react";
 import type { Role } from "@/types/user";
 
 export const Register = () => {
@@ -20,6 +20,7 @@ export const Register = () => {
     confirmPassword: "",
     role: "EMPLOYEE" as Role,
     phone: "",
+    companyId: "",
   });
   const [companyDetails, setCompanyDetails] = useState({
     name: "",
@@ -36,6 +37,19 @@ export const Register = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [companies, setCompanies] = useState<{ _id: string; name: string }[]>([]);
+
+  useEffect(() => {
+    const fetchCompanies = async () => {
+        try {
+            const data = await companyService.getPublic();
+            setCompanies(data);
+        } catch (error) {
+            console.error("Failed to fetch companies");
+        }
+    };
+    fetchCompanies();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,6 +72,8 @@ export const Register = () => {
       // If COMPANY_ADMIN, include company details
       if (formData.role === "COMPANY_ADMIN") {
         (registerData as any).companyDetails = companyDetails;
+      } else if (formData.role === "EMPLOYEE") {
+         (registerData as any).companyId = formData.companyId;
       }
       
       const response = await authService.register(registerData);
@@ -176,6 +192,34 @@ export const Register = () => {
                 })}
               </div>
             </div>
+
+            {/* Company Selection - Only for EMPLOYEE/MAINTENANCE_TEAM */}
+            {formData.role === "EMPLOYEE" && (
+              <div className="space-y-4 p-4 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg">
+                <h3 className="font-semibold flex items-center gap-2">
+                  <Building2 className="h-5 w-5" />
+                  Select Company
+                </h3>
+                  <div className="space-y-2">
+                    <Label htmlFor="companyId">Company *</Label>
+                    <select
+                      id="companyId"
+                      className="flex h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      value={formData.companyId || ""}
+                      onChange={(e) => setFormData({ ...formData, companyId: e.target.value })}
+                      required
+                    >
+                      <option value="" disabled>Select a company</option>
+                      {companies.map((company) => (
+                        <option key={company._id} value={company._id}>
+                          {company.name}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="text-xs text-muted-foreground">Select the company you work for.</p>
+                  </div>
+              </div>
+            )}
 
             {/* Company Details Form - Only for COMPANY_ADMIN */}
             {formData.role === "COMPANY_ADMIN" && (

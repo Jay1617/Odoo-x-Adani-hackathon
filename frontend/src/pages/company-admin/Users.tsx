@@ -35,6 +35,15 @@ export const UsersPage = () => {
   });
   const [teams, setTeams] = useState<any[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  
+  // Role update state
+  const [roleDialogOpen, setRoleDialogOpen] = useState(false);
+  const [roleChangeData, setRoleChangeData] = useState<{
+    userId: string;
+    currentRole: string;
+    newRole: string;
+    maintenanceTeamId?: string;
+  } | null>(null);
 
   useEffect(() => {
     fetchUsers();
@@ -100,24 +109,21 @@ export const UsersPage = () => {
     }
   };
 
-  const handleRoleChange = async (userId: string, newRole: "EMPLOYEE" | "MAINTENANCE_TEAM") => {
-    try {
-      await employeeService.updateRole(userId, newRole);
-      toast.success("Employee role updated successfully");
-      fetchUsers();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to update role");
-    }
-  };
+  const handleRoleChange = async () => {
+    if (!roleChangeData) return;
 
-  const handleAssignToCategory = async (employeeId: string, categoryId: string) => {
     try {
-      await categoryService.assignEmployee(categoryId, employeeId);
-      toast.success("Employee assigned to category successfully");
+      await employeeService.updateRole(
+        roleChangeData.userId,
+        roleChangeData.newRole as any,
+        roleChangeData.maintenanceTeamId
+      );
+      toast.success("User role updated successfully");
+      setRoleDialogOpen(false);
       fetchUsers();
-      fetchTeams();
     } catch (error: any) {
-      toast.error(error.message || "Failed to assign employee");
+      console.error(error);
+      toast.error(error.message || "Failed to update user role");
     }
   };
 
@@ -189,7 +195,7 @@ export const UsersPage = () => {
           {filteredUsers.map((user) => {
             const RoleIcon = getRoleIcon(user.role);
             return (
-              <Card key={user.id} className="hover:shadow-lg transition-shadow">
+              <Card key={(user as any)._id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
@@ -234,28 +240,64 @@ export const UsersPage = () => {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handleRoleChange(user.id, user.role === "EMPLOYEE" ? "MAINTENANCE_TEAM" : "EMPLOYEE")}
+                          onClick={() => {
+                            const userObj = user as any;
+                            // Fallback to id if _id missing, or vice versa.
+                            const userId = userObj._id || userObj.id;
+                            if (!userId) {
+                                console.error("User ID missing in object:", user);
+                                toast.error("Error: User ID missing");
+                                return;
+                            }
+
+                            const teamId = user.maintenanceTeamId && typeof user.maintenanceTeamId === 'object'
+                                ? (user.maintenanceTeamId as any)._id 
+                                : user.maintenanceTeamId;
+                                
+                            setRoleChangeData({
+                                userId: userId,
+                                currentRole: user.role,
+                                newRole: user.role === "EMPLOYEE" ? "MAINTENANCE_TEAM" : "EMPLOYEE",
+                                maintenanceTeamId: teamId
+                            });
+                            setRoleDialogOpen(true);
+                          }}
                           className="text-xs"
                         >
                           Switch to {user.role === "EMPLOYEE" ? "Maintenance" : "Employee"}
                         </Button>
                         {user.role === "MAINTENANCE_TEAM" && (
-                          <Select
-                            value={user.maintenanceTeamId || ""}
-                            onChange={(e) => {
-                              if (e.target.value) {
-                                handleAssignToCategory(user.id, e.target.value);
-                              }
-                            }}
-                            className="text-xs h-8"
-                          >
-                            <option value="">Assign to Category</option>
-                            {teams.map((team) => (
-                              <option key={team.id} value={team.id}>
-                                {team.name}
-                              </option>
-                            ))}
-                          </Select>
+                          <div className="relative">
+                              <select
+                                className="h-8 text-xs border rounded px-2 pr-8 appearance-none bg-background"
+                                value={user.maintenanceTeamId && typeof user.maintenanceTeamId === 'object' ? (user.maintenanceTeamId as any)._id : user.maintenanceTeamId || ""}
+                                onChange={async (e) => {
+                                  const newTeamId = e.target.value;
+                                  if (newTeamId) {
+                                    try {
+                                        const userObj = user as any;
+                                        const userId = userObj._id || userObj.id;
+                                        if (!userId) {
+                                            toast.error("User ID missing");
+                                            return;
+                                        }
+                                        await employeeService.updateRole(userId, "MAINTENANCE_TEAM", newTeamId);
+                                        toast.success("Team assigned successfully");
+                                        fetchUsers();
+                                    } catch(err: any) {
+                                        toast.error(err.message || "Failed to assign team");
+                                    }
+                                  }
+                                }}
+                              >
+                                <option value="">Assign to Category</option>
+                                {teams.map((team) => (
+                                  <option key={team._id} value={team._id}>
+                                    {team.name}
+                                  </option>
+                                ))}
+                              </select>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -341,6 +383,21 @@ export const UsersPage = () => {
               </Button>
             </div>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={roleDialogOpen} onOpenChange={setRoleDialogOpen}>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>Confirm Role Change</DialogTitle>
+                <DialogDescription>
+                    Are you sure you want to change this user's role from {roleChangeData?.currentRole} to {roleChangeData?.newRole}?
+                </DialogDescription>
+            </DialogHeader>
+            <div className="flex justify-end gap-2 pt-4">
+                <Button variant="outline" onClick={() => setRoleDialogOpen(false)}>Cancel</Button>
+                <Button onClick={handleRoleChange}>Confirm Change</Button>
+            </div>
         </DialogContent>
       </Dialog>
     </div>

@@ -1,7 +1,8 @@
 export type Role = "PLATFORM_ADMIN" | "COMPANY_ADMIN" | "MAINTENANCE_TEAM" | "EMPLOYEE";
 
 export interface User {
-  id: string;
+  _id: string;
+  id?: string; // Some parts might map it, but _id is source of truth
   name: string;
   email_id: string;
   role: Role;

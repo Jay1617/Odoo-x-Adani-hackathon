@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import { maintenanceService } from "@/services/maintenance.service";
 import { Loader } from "@/components/common/Loader";
-import { ClipboardList, AlertCircle, CheckCircle, User, Activity } from "lucide-react";
+import { ClipboardList, AlertCircle, CheckCircle, User, Building2 } from "lucide-react";
 
 export const EmployeeDashboard = () => {
   const { user } = useAuth();
@@ -18,11 +18,13 @@ export const EmployeeDashboard = () => {
     const fetchStats = async () => {
       try {
         const requests = await maintenanceService.getAll();
-        const myRequests = requests.filter((r) => r.assignedToId === user?.id);
+        const myRequests = requests.filter((r) => r.assignedTo?._id === user?.id);
+        const open = myRequests.filter((r) => r.status !== "REPAIRED" && r.status !== "SCRAP").length;
+        const completed = myRequests.filter((r) => r.status === "REPAIRED").length;
         setStats({
           myRequests: myRequests.length,
-          openRequests: myRequests.filter((r) => r.stage !== "repaired" && r.stage !== "scrap").length,
-          completedRequests: myRequests.filter((r) => r.stage === "repaired").length,
+          openRequests: open,
+          completedRequests: completed,
         });
       } catch (error) {
         console.error("Failed to fetch stats:", error);
@@ -43,6 +45,9 @@ export const EmployeeDashboard = () => {
     );
   }
 
+  // Handle company display safely (checking if companyId is populated object)
+  const companyName = typeof user?.companyId === 'object' && user.companyId ? (user.companyId as any).name : '';
+
   return (
     <div className="space-y-6">
       <div>
@@ -50,15 +55,26 @@ export const EmployeeDashboard = () => {
           <User className="h-8 w-8" />
           Dashboard
         </h1>
-        <p className="text-muted-foreground">Welcome back, {user?.name}</p>
+        <div className="flex flex-col md:flex-row md:items-center gap-2 text-muted-foreground mt-2">
+           <p>Welcome back, <span className="font-semibold text-foreground">{user?.name}</span></p>
+           {companyName && (
+             <>
+                <span className="hidden md:inline">•</span>
+                <p className="flex items-center gap-2">
+                    <Building2 className="h-4 w-4" />
+                    {companyName}
+                </p>
+             </>
+           )}
+        </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card className="border-2 hover:shadow-lg transition-shadow">
+      <div className="grid gap-6 md:grid-cols-3">
+        <Card className="border-2 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">My Requests</CardTitle>
-            <div className="p-2 rounded-full bg-black dark:bg-white">
-              <ClipboardList className="h-4 w-4 text-white dark:text-black" />
+            <CardTitle className="text-sm font-medium uppercase tracking-wider text-muted-foreground">My Requests</CardTitle>
+            <div className="p-3 rounded-xl bg-black dark:bg-white shadow-lg">
+              <ClipboardList className="h-5 w-5 text-white dark:text-black" />
             </div>
           </CardHeader>
           <CardContent>

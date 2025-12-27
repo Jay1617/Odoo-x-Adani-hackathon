@@ -15,6 +15,7 @@ import { Companies } from "@/pages/main-admin/Companies";
 import { CompanyAdminLayout } from "@/layouts/CompanyAdminLayout";
 import { CompanyAdminDashboard } from "@/pages/company-admin/Dashboard";
 import { EquipmentPage } from "@/pages/company-admin/Equipment";
+import { EquipmentDetailPage } from "@/pages/company-admin/EquipmentDetail";
 import { TeamsPage } from "@/pages/company-admin/Teams";
 import { UsersPage } from "@/pages/company-admin/Users";
 import { CategoriesPage } from "@/pages/company-admin/Categories";
@@ -26,6 +27,7 @@ import { ReportsPage } from "@/pages/company-admin/Reports";
 import { EmployeeLayout } from "@/layouts/EmployeeLayout";
 import { EmployeeDashboard } from "@/pages/employee/Dashboard";
 import { MyRequestsPage } from "@/pages/employee/MyRequests";
+import { TeamTasksPage } from "@/pages/employee/TeamTasks";
 import { EmployeeKanbanPage } from "@/pages/employee/Kanban";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -63,6 +65,7 @@ export const AppRoutes = () => {
                 <Routes>
                   <Route path="dashboard" element={<CompanyAdminDashboard />} />
                   <Route path="equipment" element={<EquipmentPage />} />
+                  <Route path="equipment/:id" element={<EquipmentDetailPage />} />
                   <Route path="teams" element={<TeamsPage />} />
                   <Route path="users" element={<UsersPage />} />
                   <Route path="categories" element={<CategoriesPage />} />
@@ -87,6 +90,7 @@ export const AppRoutes = () => {
                 <Routes>
                   <Route path="dashboard" element={<EmployeeDashboard />} />
                   <Route path="my-requests" element={<MyRequestsPage />} />
+                  <Route path="team-tasks" element={<TeamTasksPage />} />
                   <Route path="kanban" element={<EmployeeKanbanPage />} />
                   <Route path="*" element={<Navigate to="dashboard" replace />} />
                 </Routes>

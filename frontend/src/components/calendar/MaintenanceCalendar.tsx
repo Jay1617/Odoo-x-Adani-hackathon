@@ -6,7 +6,8 @@ import { type MaintenanceRequest } from "@/types/maintenance";
 import { formatDate } from "@/utils/date";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { TYPE_LABELS } from "@/utils/constants";
+import { TYPE_LABELS, STAGE_LABELS, STAGE_COLORS } from "@/utils/constants";
+import { cn } from "@/lib/utils";
 
 interface MaintenanceCalendarProps {
   requests: MaintenanceRequest[];
@@ -21,30 +22,33 @@ export const MaintenanceCalendar = ({
 }: MaintenanceCalendarProps) => {
   const [selectedRequest, setSelectedRequest] = useState<MaintenanceRequest | null>(null);
 
-  // Filter only preventive maintenance requests
-  const preventiveRequests = requests.filter((r) => r.type === "preventive");
+  // Filter only preventive maintenance requests as per requirements
+  const safeRequests = requests || [];
+  const preventiveRequests = safeRequests.filter((r) => r.requestType === "PREVENTIVE");
 
   const events = preventiveRequests.map((request) => ({
-    id: request.id.toString(),
-    title: request.subject,
+    id: request._id,
+    title: `${request.subject} (${request.equipmentId?.name})`,
     start: request.scheduledDate || request.createdAt,
     extendedProps: { request },
-    backgroundColor: request.stage === "repaired" ? "#10b981" : "#3b82f6",
+    backgroundColor: request.status === "REPAIRED" ? "oklch(0.646 0.222 41.116)" : "oklch(0.205 0 0)", // Custom colors
+    borderColor: "transparent",
+    textColor: "#fff"
   }));
 
   const handleDateClick = (arg: { date: Date }) => {
     onDateClick?.(arg.date);
   };
 
-  const handleEventClick = (arg: { event: { extendedProps: { request: MaintenanceRequest } } }) => {
-    const request = arg.event.extendedProps.request;
+  const handleEventClick = (arg: any) => {
+    const request = arg.event.extendedProps.request as MaintenanceRequest;
     setSelectedRequest(request);
     onEventClick?.(request);
   };
 
   return (
     <>
-      <div className="bg-card rounded-lg border p-4">
+      <div className="bg-card rounded-lg border p-4 shadow-sm">
         <FullCalendar
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
@@ -57,6 +61,7 @@ export const MaintenanceCalendar = ({
             right: "dayGridMonth,dayGridWeek",
           }}
           height="auto"
+          dayMaxEvents={true}
         />
       </div>
 
@@ -66,27 +71,37 @@ export const MaintenanceCalendar = ({
             <DialogHeader>
               <DialogTitle>{selectedRequest.subject}</DialogTitle>
             </DialogHeader>
-            <div className="space-y-2">
-              <div>
-                <p className="text-sm font-medium">Equipment</p>
-                <p className="text-sm text-muted-foreground">{selectedRequest.equipmentName}</p>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <p className="text-sm font-medium text-muted-foreground">Equipment</p>
+                    <p className="text-sm">{selectedRequest.equipmentId?.name}</p>
+                 </div>
+                 <div>
+                    <p className="text-sm font-medium text-muted-foreground">Serial Number</p>
+                    <p className="text-sm">{selectedRequest.equipmentId?.serialNumber}</p>
+                 </div>
               </div>
-              <div>
-                <p className="text-sm font-medium">Type</p>
-                <Badge variant="secondary">{TYPE_LABELS[selectedRequest.type]}</Badge>
+              
+              <div className="flex gap-2">
+                 <Badge variant="outline" className={cn(STAGE_COLORS[selectedRequest.status])}>
+                    {STAGE_LABELS[selectedRequest.status]}
+                 </Badge>
+                 <Badge variant="secondary">{TYPE_LABELS[selectedRequest.requestType]}</Badge>
               </div>
+
               {selectedRequest.scheduledDate && (
                 <div>
-                  <p className="text-sm font-medium">Scheduled Date</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm font-medium text-muted-foreground">Scheduled Date</p>
+                  <p className="text-sm">
                     {formatDate(selectedRequest.scheduledDate)}
                   </p>
                 </div>
               )}
               {selectedRequest.description && (
                 <div>
-                  <p className="text-sm font-medium">Description</p>
-                  <p className="text-sm text-muted-foreground">{selectedRequest.description}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Description</p>
+                  <p className="text-sm p-2 bg-muted rounded-md">{selectedRequest.description}</p>
                 </div>
               )}
             </div>
@@ -96,4 +111,3 @@ export const MaintenanceCalendar = ({
     </>
   );
 };
-

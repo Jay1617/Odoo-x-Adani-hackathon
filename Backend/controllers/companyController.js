@@ -162,3 +162,22 @@ export const deleteCompany = async (req, res) => {
   }
 };
 
+export const getPublicCompanies = async (req, res) => {
+  try {
+    const companies = await Company.find({ isActive: true })
+      .select('name _id')
+      .sort({ name: 1 });
+    
+    res.json({
+      success: true,
+      data: { companies }
+    });
+  } catch (error) {
+    console.error('Get public companies error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error fetching companies'
+    });
+  }
+};
+

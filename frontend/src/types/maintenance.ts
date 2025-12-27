@@ -1,32 +1,52 @@
-export type MaintenanceRequestType = "corrective" | "preventive";
-export type MaintenanceRequestStage = "new" | "in_progress" | "repaired" | "scrap";
+export type MaintenanceRequestType = "CORRECTIVE" | "PREVENTIVE";
+export type MaintenanceRequestStatus = "NEW" | "IN_PROGRESS" | "REPAIRED" | "SCRAP";
 
 export interface MaintenanceRequest {
-  id: number;
+  _id: string;
   subject: string;
-  type: MaintenanceRequestType;
-  stage: MaintenanceRequestStage;
-  equipmentId: number;
-  equipmentName: string;
-  equipmentSerialNumber?: string;
+  requestType: MaintenanceRequestType;
+  status: MaintenanceRequestStatus;
+  
+  equipmentId: {
+      _id: string;
+      name: string;
+      serialNumber: string;
+      defaultMaintenanceCategory?: string;
+  };
+  
   scheduledDate?: string;
   duration?: number; // hours spent
-  assignedToId?: number;
-  assignedToName?: string;
-  assignedToAvatar?: string;
-  maintenanceTeamId: number;
-  maintenanceTeamName: string;
+  
+  assignedTo?: {
+      _id: string;
+      name: string;
+      email: string;
+  };
+  
+  maintenanceTeamId?: {
+      _id: string;
+      name: string;
+  };
+  
+  requestedBy?: {
+      _id: string;
+      name: string;
+      email: string;
+  };
+
   description?: string;
-  isOverdue: boolean;
+  priority: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  resolution?: string;
+  
   createdAt: string;
   updatedAt: string;
 }
 
 export interface MaintenanceRequestFormData {
   subject: string;
-  type: MaintenanceRequestType;
-  equipmentId: number;
+  requestType: MaintenanceRequestType;
+  equipmentId: string;
   scheduledDate?: string;
   description?: string;
+  priority?: string;
 }
-

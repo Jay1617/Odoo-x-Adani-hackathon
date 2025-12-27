@@ -13,11 +13,14 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
 
+import { AddEquipmentDialog } from "@/components/equipment/AddEquipmentDialog";
+
 export const EquipmentPage = () => {
   const [equipment, setEquipment] = useState<Equipment[]>([]);
   const [filteredEquipment, setFilteredEquipment] = useState<Equipment[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const debouncedSearch = useDebounce(searchTerm, 300);
 
   useEffect(() => {
@@ -66,11 +69,17 @@ export const EquipmentPage = () => {
           <h1 className="text-3xl font-bold">Equipment</h1>
           <p className="text-muted-foreground">Manage all company assets</p>
         </div>
-        <Button>
+        <Button onClick={() => setIsAddDialogOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
           Add Equipment
         </Button>
       </div>
+      
+      <AddEquipmentDialog 
+        open={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
+        onEquipmentCreated={fetchEquipment}
+      />
 
       <div className="relative">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -87,7 +96,7 @@ export const EquipmentPage = () => {
           icon={Wrench}
           title="No equipment found"
           description={searchTerm ? "Try adjusting your search" : "Get started by adding your first equipment"}
-          action={{ label: "Add Equipment", onClick: () => {} }}
+          action={{ label: "Add Equipment", onClick: () => setIsAddDialogOpen(true) }}
         />
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -96,7 +105,7 @@ export const EquipmentPage = () => {
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <CardTitle className="text-lg">{eq.name}</CardTitle>
-                  <Badge variant={eq.status === "active" ? "default" : "secondary"}>
+                  <Badge variant={eq.status === "ACTIVE" ? "default" : "secondary"}>
                     {eq.status}
                   </Badge>
                 </div>
@@ -108,14 +117,14 @@ export const EquipmentPage = () => {
                   {eq.department && (
                     <p className="text-muted-foreground">Department: {eq.department}</p>
                   )}
-                  {eq.employeeName && (
-                    <p className="text-muted-foreground">Assigned to: {eq.employeeName}</p>
+                  {eq.assignedTo && (
+                    <p className="text-muted-foreground">Assigned to: {eq.assignedTo.name}</p>
                   )}
-                  <p className="text-muted-foreground">Team: {eq.maintenanceTeamName}</p>
+                  <p className="text-muted-foreground">Team: {eq.maintenanceTeamId?.name}</p>
                   <p className="text-xs text-muted-foreground">
                     Purchased: {formatDate(eq.purchaseDate)}
                   </p>
-                  <Link to={`/equipment/${eq.id}`}>
+                  <Link to={`/company-admin/equipment/${eq.id || eq._id}`}>
                     <Button variant="outline" size="sm" className="w-full mt-2">
                       View Details
                     </Button>

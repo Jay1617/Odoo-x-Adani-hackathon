@@ -53,7 +53,13 @@ const EquipmentSchema = new mongoose.Schema(
       ref: "MaintenanceCategory",
     },
 
-    // Default maintenance team/category for this equipment
+    // Default maintenance team for this equipment
+    maintenanceTeamId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "MaintenanceTeam",
+    },
+
+    // Default maintenance category for this equipment
     defaultMaintenanceCategory: {
       type: String,
       trim: true,

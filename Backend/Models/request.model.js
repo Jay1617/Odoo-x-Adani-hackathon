@@ -22,6 +22,11 @@ const MaintenanceRequestSchema = new mongoose.Schema(
       required: true,
     },
 
+    maintenanceTeamId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "MaintenanceTeam",
+    },
+
     requestType: {
       type: String,
       enum: ["CORRECTIVE", "PREVENTIVE"],
@@ -45,22 +50,32 @@ const MaintenanceRequestSchema = new mongoose.Schema(
       default: "MEDIUM",
     },
 
-    preferredDate: {
-      type: Date, 
+    scheduledDate: {
+      type: Date, // For preventive maintenance
     },
 
     status: {
       type: String,
-      enum: ["NEW", "APPROVED", "REJECTED", "ASSIGNED"],
+      enum: ["NEW", "IN_PROGRESS", "REPAIRED", "SCRAP"],
       default: "NEW",
       index: true,
     },
 
-    assignmentId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "MaintenanceAssignment",
-      default: null,
+    assignedTo: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
     },
+
+    duration: {
+        type: Number, // Hours spent
+        default: 0
+    },
+    
+    // Notes or resolution details
+    resolution: {
+        type: String,
+        trim: true
+    }
   },
   {
     timestamps: true,

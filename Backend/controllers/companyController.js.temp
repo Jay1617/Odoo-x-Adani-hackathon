@@ -1,0 +1,27 @@
+import Company from "../Models/company.model.js";
+
+// @desc    Get all companies (public for registration)
+// @route   GET /api/v1/companies/public
+// @access  Public
+export const getPublicCompanies = async (req, res) => {
+  try {
+    const companies = await Company.find({ isActive: true })
+      .select('name _id')
+      .sort({ name: 1 });
+    
+    res.json({
+      success: true,
+      data: companies
+    });
+  } catch (error) {
+    console.error('Get public companies error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error fetching companies'
+    });
+  }
+};
+
+// ... existing controllers need to be here if I overwrite, so I should probably use replace_file_content or append.
+// Ideally I should read the file first or write a separate controller if structure allows, but usually we group by resource.
+// Let's just append this function to companyController.js or check if it exists.

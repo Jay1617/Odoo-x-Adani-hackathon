@@ -1,15 +1,13 @@
-export interface TeamMember {
-  id: number;
-  name: string;
-  email: string;
-  avatar?: string;
-}
-
 export interface MaintenanceTeam {
-  id: number;
+  _id: string;
   name: string;
   description?: string;
-  members: TeamMember[];
+  members: {
+      _id: string;
+      name: string;
+      email: string;
+  }[];
+  createdBy: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -17,6 +15,5 @@ export interface MaintenanceTeam {
 export interface MaintenanceTeamFormData {
   name: string;
   description?: string;
-  memberIds: number[];
+  members?: string[]; // Array of User IDs
 }
-

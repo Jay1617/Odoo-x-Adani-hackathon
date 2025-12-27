@@ -257,16 +257,70 @@ export const logoutUser = async (req, res) => {
   }
 };
 
+// @desc    Update user role (Company Admin)
+// @route   PUT /api/v1/users/:id/role
+// @access  Private/Company Admin
+export const updateUserRole = async (req, res) => {
+    try {
+        const { role, maintenanceTeamId } = req.body;
+        const requestedUser = await User.findById(req.params.id);
+
+        if (!requestedUser) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        // Check if user belongs to the same company
+        if (req.user.companyId.toString() !== requestedUser.companyId.toString()) {
+            return res.status(403).json({ success: false, message: "Not authorized to update this user" });
+        }
+
+        const updates = { role };
+        if (role === "MAINTENANCE_TEAM") {
+            // Ensure maintenanceTeamId is a string or null
+            if (maintenanceTeamId && typeof maintenanceTeamId === 'object' && maintenanceTeamId._id) {
+                 updates.maintenanceTeamId = maintenanceTeamId._id;
+            } else {
+                 updates.maintenanceTeamId = maintenanceTeamId; 
+            }
+        } else {
+            updates.maintenanceTeamId = null;
+        }
+
+        const user = await User.findByIdAndUpdate(req.params.id, updates, { new: true })
+            .select('-password')
+            .populate('maintenanceTeamId', 'name');
+
+         res.json({
+            success: true,
+            message: 'User role updated successfully',
+            data: { user }
+        });
+
+    } catch (error) {
+        console.error('Update user role error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error updating user role'
+        });
+    }
+};
+
 // @desc    Get all users (Admin only)
 // @route   GET /api/users
 // @access  Private/Admin
 export const getAllUsers = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
 
-    const users = await User.find()
+    let query = {};
+    // If company admin, only show users from their company
+    if (req.user.role === 'COMPANY_ADMIN') {
+        query.companyId = req.user.companyId;
+    }
+
+    const users = await User.find(query)
       .select('-password')
       .populate('companyId', 'name')
       .populate('maintenanceTeamId', 'name')
@@ -274,7 +328,7 @@ export const getAllUsers = async (req, res) => {
       .skip(skip)
       .limit(limit);
 
-    const total = await User.countDocuments();
+    const total = await User.countDocuments(query);
 
     res.json({
       success: true,
