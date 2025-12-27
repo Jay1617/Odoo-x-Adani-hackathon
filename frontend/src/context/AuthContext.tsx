@@ -20,9 +20,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const login = (data: { user: User; token: string }) => {
-    setUser(data.user);
+    // Map backend user to frontend format
+    const frontendUser: User = {
+      ...data.user,
+      id: data.user.id || (data.user as any)._id || "",
+    };
+    setUser(frontendUser);
     setToken(data.token);
-    localStorage.setItem("user", JSON.stringify(data.user));
+    localStorage.setItem("user", JSON.stringify(frontendUser));
     localStorage.setItem("token", data.token);
   };
 

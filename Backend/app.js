@@ -41,16 +41,6 @@ app.use(cors({
 }));
 
 // Rate limiting
-const generalLimiter = rateLimit({
-    windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
-    max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,
-    message: {
-        success: false,
-        message: 'Too many requests from this IP, please try again later.'
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
-});
 
 const authLimiter = rateLimit({
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
@@ -66,20 +56,20 @@ const authLimiter = rateLimit({
 // Apply rate limiting
 app.use('/api/v1/users/login', authLimiter);
 app.use('/api/v1/users/register', authLimiter);
-app.use('/api/', generalLimiter);
+// app.use('/api/', generalLimiter);
 
 // Health check endpoint
-app.get('/health', (req, res) => {
-    res.status(200).json({
-        success: true,
-        message: 'Server is running',
-        timestamp: new Date().toISOString(),
-        environment: process.env.NODE_ENV,
-        app: process.env.APP_NAME,
-        version: process.env.API_VERSION || 'v1',
-        database: 'connected'
-    });
-});
+// app.get('/health', (req, res) => {
+//     res.status(200).json({
+//         success: true,
+//         message: 'Server is running',
+//         timestamp: new Date().toISOString(),
+//         environment: process.env.NODE_ENV,
+//         app: process.env.APP_NAME,
+//         version: process.env.API_VERSION || 'v1',
+//         database: 'connected'
+//     });
+// });
 
 // Test endpoint
 app.get('/api/test', (req, res) => {

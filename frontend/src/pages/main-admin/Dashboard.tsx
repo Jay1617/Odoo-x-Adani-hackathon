@@ -4,7 +4,7 @@ import { companyService } from "@/services/company.service";
 import { equipmentService } from "@/services/equipment.service";
 import { maintenanceService } from "@/services/maintenance.service";
 import { Loader } from "@/components/common/Loader";
-import { Building2, Wrench, ClipboardList } from "lucide-react";
+import { Building2, Wrench, ClipboardList, Shield, Activity } from "lucide-react";
 
 export const MainAdminDashboard = () => {
   const [stats, setStats] = useState({
@@ -47,38 +47,50 @@ export const MainAdminDashboard = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">Main Admin Overview</p>
+        <h1 className="text-3xl font-bold flex items-center gap-2">
+          <Shield className="h-8 w-8" />
+          Platform Dashboard
+        </h1>
+        <p className="text-muted-foreground">System-wide Overview & Analytics</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card>
+        <Card className="border-2 hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Companies</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground" />
+            <div className="p-2 rounded-full bg-black dark:bg-white">
+              <Building2 className="h-4 w-4 text-white dark:text-black" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.companies}</div>
+            <div className="text-3xl font-bold">{stats.companies}</div>
+            <p className="text-xs text-muted-foreground mt-1">Registered companies</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-2 hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Equipment</CardTitle>
-            <Wrench className="h-4 w-4 text-muted-foreground" />
+            <div className="p-2 rounded-full bg-black dark:bg-white">
+              <Wrench className="h-4 w-4 text-white dark:text-black" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.equipment}</div>
+            <div className="text-3xl font-bold">{stats.equipment}</div>
+            <p className="text-xs text-muted-foreground mt-1">Across all companies</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-2 hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Maintenance Requests</CardTitle>
-            <ClipboardList className="h-4 w-4 text-muted-foreground" />
+            <div className="p-2 rounded-full bg-black dark:bg-white">
+              <ClipboardList className="h-4 w-4 text-white dark:text-black" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.requests}</div>
+            <div className="text-3xl font-bold">{stats.requests}</div>
+            <p className="text-xs text-muted-foreground mt-1">All requests</p>
           </CardContent>
         </Card>
       </div>

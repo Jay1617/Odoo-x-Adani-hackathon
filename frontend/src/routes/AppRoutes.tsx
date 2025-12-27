@@ -4,6 +4,7 @@ import { RoleGuard } from "./RoleGuard";
 
 // Auth
 import { Login } from "@/pages/auth/Login";
+import { Register } from "@/pages/auth/Register";
 
 // Main Admin
 import { MainAdminLayout } from "@/layouts/MainAdminLayout";
@@ -15,6 +16,7 @@ import { CompanyAdminLayout } from "@/layouts/CompanyAdminLayout";
 import { CompanyAdminDashboard } from "@/pages/company-admin/Dashboard";
 import { EquipmentPage } from "@/pages/company-admin/Equipment";
 import { TeamsPage } from "@/pages/company-admin/Teams";
+import { UsersPage } from "@/pages/company-admin/Users";
 import { MaintenanceRequestsPage } from "@/pages/company-admin/MaintenanceRequests";
 import { PreventiveSchedulePage } from "@/pages/company-admin/PreventiveSchedule";
 import { ReportsPage } from "@/pages/company-admin/Reports";
@@ -30,13 +32,14 @@ export const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
       
       {/* Main Admin Routes */}
       <Route
         path="/main-admin/*"
         element={
           <ProtectedRoute>
-            <RoleGuard allowedRoles={["main_admin"]}>
+            <RoleGuard allowedRoles={["PLATFORM_ADMIN"]}>
               <MainAdminLayout>
                 <Routes>
                   <Route path="dashboard" element={<MainAdminDashboard />} />
@@ -54,12 +57,13 @@ export const AppRoutes = () => {
         path="/company-admin/*"
         element={
           <ProtectedRoute>
-            <RoleGuard allowedRoles={["company_admin"]}>
+            <RoleGuard allowedRoles={["COMPANY_ADMIN"]}>
               <CompanyAdminLayout>
                 <Routes>
                   <Route path="dashboard" element={<CompanyAdminDashboard />} />
                   <Route path="equipment" element={<EquipmentPage />} />
                   <Route path="teams" element={<TeamsPage />} />
+                  <Route path="users" element={<UsersPage />} />
                   <Route path="maintenance-requests" element={<MaintenanceRequestsPage />} />
                   <Route path="preventive-schedule" element={<PreventiveSchedulePage />} />
                   <Route path="reports" element={<ReportsPage />} />
@@ -71,12 +75,12 @@ export const AppRoutes = () => {
         }
       />
 
-      {/* Employee Routes */}
+      {/* Employee & Maintenance Team Routes */}
       <Route
         path="/employee/*"
         element={
           <ProtectedRoute>
-            <RoleGuard allowedRoles={["employee"]}>
+            <RoleGuard allowedRoles={["EMPLOYEE", "MAINTENANCE_TEAM"]}>
               <EmployeeLayout>
                 <Routes>
                   <Route path="dashboard" element={<EmployeeDashboard />} />
@@ -111,10 +115,11 @@ const NavigateToRoleDashboard = () => {
   
   if (!user) return <Navigate to="/login" replace />;
 
-  const rolePath = {
-    main_admin: "/main-admin/dashboard",
-    company_admin: "/company-admin/dashboard",
-    employee: "/employee/dashboard",
+  const rolePath: Record<string, string> = {
+    PLATFORM_ADMIN: "/main-admin/dashboard",
+    COMPANY_ADMIN: "/company-admin/dashboard",
+    MAINTENANCE_TEAM: "/employee/dashboard",
+    EMPLOYEE: "/employee/dashboard",
   };
 
   return <Navigate to={rolePath[user.role] || "/login"} replace />;

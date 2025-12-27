@@ -24,25 +24,26 @@ interface NavItem {
 }
 
 const getNavItems = (role: string): NavItem[] => {
-  if (role === "main_admin") {
+  if (role === "PLATFORM_ADMIN") {
     return [
       { label: "Dashboard", path: "/main-admin/dashboard", icon: LayoutDashboard },
       { label: "Companies", path: "/main-admin/companies", icon: Building2 },
     ];
   }
 
-  if (role === "company_admin") {
+  if (role === "COMPANY_ADMIN") {
     return [
       { label: "Dashboard", path: "/company-admin/dashboard", icon: LayoutDashboard },
       { label: "Equipment", path: "/company-admin/equipment", icon: Building2 },
       { label: "Teams", path: "/company-admin/teams", icon: Users },
+      { label: "Users", path: "/company-admin/users", icon: Users },
       { label: "Maintenance Requests", path: "/company-admin/maintenance-requests", icon: ClipboardList },
       { label: "Preventive Schedule", path: "/company-admin/preventive-schedule", icon: Calendar },
       { label: "Reports", path: "/company-admin/reports", icon: BarChart3 },
     ];
   }
 
-  // Employee
+  // Employee & Maintenance Team
   return [
     { label: "Dashboard", path: "/employee/dashboard", icon: LayoutDashboard },
     { label: "My Requests", path: "/employee/my-requests", icon: FileText },
@@ -128,7 +129,7 @@ export const Sidebar = () => {
                 <p className="text-sm font-medium text-sidebar-foreground truncate">
                   {user.name}
                 </p>
-                <p className="text-xs text-sidebar-foreground/70 truncate">{user.email}</p>
+                <p className="text-xs text-sidebar-foreground/70 truncate">{user.email_id}</p>
               </div>
             </div>
           </div>

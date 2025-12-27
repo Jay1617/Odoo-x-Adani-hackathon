@@ -34,7 +34,7 @@ export const Header = () => {
 
       <div className="flex items-center gap-4">
         <span className="text-sm text-muted-foreground hidden sm:inline">
-          {user?.name}
+          {user?.name || "User"}
         </span>
         <Button variant="ghost" size="icon" onClick={handleLogout}>
           <LogOut className="h-5 w-5" />
