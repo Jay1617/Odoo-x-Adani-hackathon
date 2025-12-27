@@ -21,7 +21,14 @@ export const createRequest = async (req, res) => {
 export const getRequests = async (req, res) => {
   try {
     const { status, equipmentId, assignedTo, type, maintenanceTeamId } = req.query;
-    const query = { companyId: req.user.companyId };
+    let query = {};
+
+    if (req.user.role !== 'PLATFORM_ADMIN') {
+         if (!req.user.companyId) {
+             return res.status(400).json({ success: false, message: "Company ID missing for non-admin user" });
+        }
+        query.companyId = req.user.companyId;
+    }
 
     if (status) query.status = status;
     if (equipmentId) query.equipmentId = equipmentId;
@@ -115,3 +122,77 @@ export const deleteRequest = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 }
+
+export const getDashboardStats = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const role = req.user.role;
+        const companyId = req.user.companyId;
+
+        let stats = {};
+
+        if (role === 'MAINTENANCE_TEAM') {
+             // For Maintenance Team: active tasks, team unclaimed, history
+             const maintenanceTeamId = req.user.maintenanceTeamId; // Assuming populated or ID? Logic needs to be safe.
+             // But wait, req.user from auth middleware might not populate if not requested.
+             // Middleware usually: const user = await User.findById(decoded.id).select('-password');
+             // It does NOT populate by default in typical auth middleware unless specified.
+             // We should query using the ID we have.
+
+             const myTasks = await MaintenanceRequest.countDocuments({ assignedTo: userId, status: { $nin: ['REPAIRED', 'SCRAP'] } });
+             const completedByMe = await MaintenanceRequest.countDocuments({ assignedTo: userId, status: 'REPAIRED' });
+             
+             let teamUnassigned = 0;
+             let activeTaskList = [];
+             
+             if (maintenanceTeamId) {
+                  // Normalize ID if it's an object (though usually auth middleware returns doc which behaves like object but has _id)
+                  // But if it wasn't populated in auth middleware, it is an ObjectId.
+                  teamUnassigned = await MaintenanceRequest.countDocuments({ maintenanceTeamId: maintenanceTeamId, assignedTo: null });
+                  
+                  // Get top 5 active tasks
+                  activeTaskList = await MaintenanceRequest.find({
+                      $or: [
+                          { assignedTo: userId },
+                          { maintenanceTeamId: maintenanceTeamId, assignedTo: null }
+                      ],
+                      status: { $nin: ['REPAIRED', 'SCRAP'] }
+                  })
+                  .sort({ priority: -1, createdAt: -1 }) // High priority first
+                  .limit(5)
+                  .populate("equipmentId", "name");
+             } else {
+                 // Fallback if no team assigned
+                  activeTaskList = await MaintenanceRequest.find({ assignedTo: userId, status: { $nin: ['REPAIRED', 'SCRAP'] } })
+                  .sort({ priority: -1, createdAt: -1 })
+                  .limit(5)
+                  .populate("equipmentId", "name");
+             }
+
+             stats = {
+                 assignedToMe: myTasks,
+                 teamUnassigned,
+                 completedByMe,
+                 activeTasks: activeTaskList
+             };
+
+        } else {
+            // For Normal Employee: My Submitted Requests
+             const totalSubmitted = await MaintenanceRequest.countDocuments({ requestedBy: userId });
+             const openSubmitted = await MaintenanceRequest.countDocuments({ requestedBy: userId, status: { $nin: ['REPAIRED', 'SCRAP'] } });
+             const completedSubmitted = await MaintenanceRequest.countDocuments({ requestedBy: userId, status: { $in: ['REPAIRED', 'SCRAP'] } });
+
+             stats = {
+                 myRequests: totalSubmitted,
+                 openRequests: openSubmitted,
+                 completedRequests: completedSubmitted
+             };
+        }
+
+        res.status(200).json({ success: true, data: stats });
+
+    } catch (error) {
+        console.error("Dashboard stats error:", error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+};

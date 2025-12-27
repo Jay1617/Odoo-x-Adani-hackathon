@@ -20,14 +20,8 @@ const MaintenanceCategorySchema = new mongoose.Schema(
       trim: true,
     },
 
-    // Number of maintenance employees assigned to this category
-    assignedEmployees: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-
+    // assignedEmployees is now a virtual, we don't store it here
+    
     // Maximum number of employees that can be assigned
     maxEmployees: {
       type: Number,
@@ -47,8 +41,17 @@ const MaintenanceCategorySchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
+
+MaintenanceCategorySchema.virtual('assignedEmployees', {
+    ref: 'User',
+    localField: '_id',
+    foreignField: 'maintenanceTeamId', // User model uses maintenanceTeamId
+    justOne: false
+});
 
 MaintenanceCategorySchema.index({ companyId: 1, name: 1 }, { unique: true });
 MaintenanceCategorySchema.index({ companyId: 1, isActive: 1 });

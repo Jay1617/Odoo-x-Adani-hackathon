@@ -206,10 +206,18 @@ export const UsersPage = () => {
                       </Avatar>
                       <div>
                         <CardTitle className="text-lg">{user.name}</CardTitle>
-                        <Badge className={getRoleBadgeColor(user.role)}>
-                          <RoleIcon className="h-3 w-3 mr-1" />
-                          {user.role.replace("_", " ")}
-                        </Badge>
+                        <div className="flex gap-2 mt-1">
+                            <Badge className={getRoleBadgeColor(user.role)}>
+                            <RoleIcon className="h-3 w-3 mr-1" />
+                            {user.role.replace("_", " ")}
+                            </Badge>
+                            {user.maintenanceTeamId && typeof user.maintenanceTeamId === 'object' && (user.maintenanceTeamId as any).name && (
+                                <Badge variant="outline" className="flex items-center gap-1">
+                                    <Wrench className="h-3 w-3" />
+                                    {(user.maintenanceTeamId as any).name}
+                                </Badge>
+                            )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -226,10 +234,10 @@ export const UsersPage = () => {
                         <span>{user.phone}</span>
                       </div>
                     )}
-                    {user.maintenanceTeamId && (
+                    {user.maintenanceTeamId && typeof user.maintenanceTeamId === 'object' && (user.maintenanceTeamId as any).name && (
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Wrench className="h-4 w-4" />
-                        <span>Assigned to Category</span>
+                        <span>{(user.maintenanceTeamId as any).name}</span>
                       </div>
                     )}
                     <div className="pt-2 flex flex-col gap-2">

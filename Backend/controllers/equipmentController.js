@@ -18,7 +18,14 @@ export const createEquipment = async (req, res) => {
 export const getEquipments = async (req, res) => {
   try {
     const { department, assignedTo } = req.query;
-    const query = { companyId: req.user.companyId };
+    let query = {};
+    
+    if (req.user.role !== 'PLATFORM_ADMIN') {
+        if (!req.user.companyId) {
+             return res.status(400).json({ success: false, message: "Company ID missing for non-admin user" });
+        }
+        query.companyId = req.user.companyId;
+    }
     
     if (department) query.department = department;
     if (assignedTo) query.assignedTo = assignedTo;

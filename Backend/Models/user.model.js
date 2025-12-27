@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema(
 
     maintenanceTeamId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "MaintenanceTeam",
+      ref: "MaintenanceCategory", // Point to Category/Team
       default: null,
     },
 

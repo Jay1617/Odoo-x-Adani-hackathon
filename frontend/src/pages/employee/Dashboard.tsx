@@ -3,37 +3,43 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import { maintenanceService } from "@/services/maintenance.service";
 import { Loader } from "@/components/common/Loader";
-import { ClipboardList, AlertCircle, CheckCircle, User, Building2 } from "lucide-react";
+import { EmptyState } from "@/components/common/EmptyState";
+import { ClipboardList, AlertCircle, CheckCircle, User, Building2, Wrench } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 export const EmployeeDashboard = () => {
   const { user } = useAuth();
-  const [stats, setStats] = useState({
-    myRequests: 0,
-    openRequests: 0,
-    completedRequests: 0,
-  });
+  
+  // Consolidate state into a single object or keep separate but unconditional
+  const [dashboardData, setDashboardData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchStats = async () => {
+  // Status update handler (universal for maintenance team)
+  const handleStatusUpdate = async (taskId: string, newStatus: string) => {
       try {
-        const requests = await maintenanceService.getAll();
-        const myRequests = requests.filter((r) => r.assignedTo?._id === user?.id);
-        const open = myRequests.filter((r) => r.status !== "REPAIRED" && r.status !== "SCRAP").length;
-        const completed = myRequests.filter((r) => r.status === "REPAIRED").length;
-        setStats({
-          myRequests: myRequests.length,
-          openRequests: open,
-          completedRequests: completed,
-        });
-      } catch (error) {
-        console.error("Failed to fetch stats:", error);
-      } finally {
-        setLoading(false);
+          await maintenanceService.updateStatus(taskId, newStatus as any);
+          toast.success("Status updated");
+          // Refresh data
+          fetchData();
+      } catch(e) {
+          toast.error("Failed to update status");
       }
-    };
+  }
+
+  const fetchData = async () => {
+      try {
+          const data = await maintenanceService.getDashboardStats();
+          setDashboardData(data);
+      } catch (error) {
+          console.error("Failed to fetch stats:", error);
+      } finally {
+          setLoading(false);
+      }
+  };
+
+  useEffect(() => {
     if (user) {
-      fetchStats();
+      fetchData();
     }
   }, [user]);
 
@@ -45,9 +51,67 @@ export const EmployeeDashboard = () => {
     );
   }
 
-  // Handle company display safely (checking if companyId is populated object)
   const companyName = typeof user?.companyId === 'object' && user.companyId ? (user.companyId as any).name : '';
 
+  // Render Maintenance Team View
+  if (user?.role === "MAINTENANCE_TEAM" && dashboardData) {
+      return (
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-3xl font-bold flex items-center gap-2">
+              <Wrench className="h-8 w-8" />
+              Maintenance Dashboard
+            </h1>
+            <p className="text-muted-foreground">Overview of your maintenance tasks</p>
+          </div>
+          
+          <div className="grid gap-6 md:grid-cols-3">
+            <Card className="border-l-4 border-blue-500">
+                <CardHeader className="pb-2"><CardTitle className="text-sm">My Active Tasks</CardTitle></CardHeader>
+                <CardContent><div className="text-3xl font-bold">{dashboardData.assignedToMe || 0}</div></CardContent>
+            </Card>
+            <Card className="border-l-4 border-yellow-500">
+                <CardHeader className="pb-2"><CardTitle className="text-sm">Team Unclaimed</CardTitle></CardHeader>
+                <CardContent><div className="text-3xl font-bold">{dashboardData.teamUnassigned || 0}</div></CardContent>
+            </Card>
+            <Card className="border-l-4 border-green-500">
+                <CardHeader className="pb-2"><CardTitle className="text-sm">Completed by Me</CardTitle></CardHeader>
+                <CardContent><div className="text-3xl font-bold">{dashboardData.completedByMe || 0}</div></CardContent>
+            </Card>
+          </div>
+
+          <h2 className="text-xl font-semibold mt-6">My Active Priority List</h2>
+          {!dashboardData.activeTasks || dashboardData.activeTasks.length === 0 ? (
+              <EmptyState icon={CheckCircle} title="All Caught Up" description="You have no active tasks assigned." />
+          ) : (
+              <div className="grid gap-4">
+                  {dashboardData.activeTasks.map((task: any) => (
+                      <Card key={task._id} className="p-4 flex items-center justify-between">
+                          <div>
+                              <h3 className="font-semibold">{task.subject}</h3>
+                              <p className="text-sm text-muted-foreground">{task.equipmentId?.name}</p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                               <select 
+                                  className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                  value={task.status}
+                                  onChange={(e) => handleStatusUpdate(task._id, e.target.value)}
+                               >
+                                   <option value="NEW">New</option>
+                                   <option value="IN_PROGRESS">In Progress</option>
+                                   <option value="REPAIRED">Repaired</option>
+                                   <option value="SCRAP">Scrap</option>
+                               </select>
+                          </div>
+                      </Card>
+                  ))}
+              </div>
+          )}
+        </div>
+      );
+  }
+
+  // Render Regular Employee View
   return (
     <div className="space-y-6">
       <div>
@@ -78,7 +142,7 @@ export const EmployeeDashboard = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{stats.myRequests}</div>
+            <div className="text-3xl font-bold">{dashboardData?.myRequests || 0}</div>
             <p className="text-xs text-muted-foreground mt-1">Assigned to me</p>
           </CardContent>
         </Card>
@@ -91,7 +155,7 @@ export const EmployeeDashboard = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{stats.openRequests}</div>
+            <div className="text-3xl font-bold">{dashboardData?.openRequests || 0}</div>
             <p className="text-xs text-muted-foreground mt-1">In progress</p>
           </CardContent>
         </Card>
@@ -104,7 +168,7 @@ export const EmployeeDashboard = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{stats.completedRequests}</div>
+            <div className="text-3xl font-bold">{dashboardData?.completedRequests || 0}</div>
             <p className="text-xs text-muted-foreground mt-1">Finished</p>
           </CardContent>
         </Card>

@@ -41,4 +41,10 @@ export const maintenanceService = {
     const response = await api.get<MaintenanceRequest[]>(`/maintenance-requests?maintenanceTeamId=${teamId}`);
     return response.data;
   },
+
+  getDashboardStats: async (): Promise<any> => {
+      const response = await api.get<any>("/maintenance-requests/dashboard-stats");
+      // api interceptor unwraps .data, so response is { assignedToMe... }
+      return response.data;
+  }
 };

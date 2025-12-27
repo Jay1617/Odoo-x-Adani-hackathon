@@ -19,12 +19,13 @@ export const TeamTasksPage = () => {
 
   useEffect(() => {
     if (user && user.maintenanceTeamId) {
-      // The user.maintenanceTeamId might be just an ID string or object depending on how User is populated.
-      // Assuming it's the ID string based on backend, but let's check.
-      // If it's an object (populated), we need ._id. 
-      // User interface says: maintenanceTeamId?: string; in user.ts. But backend might populate it? 
-      // Let's assume string for now or check type at runtime.
-      const teamId = typeof user.maintenanceTeamId === 'string' ? user.maintenanceTeamId : (user.maintenanceTeamId as any)._id;
+      // Safer check for maintenanceTeamId which might be populated or string or null
+      let teamId: string | undefined;
+      if (typeof user.maintenanceTeamId === 'string') {
+          teamId = user.maintenanceTeamId;
+      } else if (user.maintenanceTeamId && typeof user.maintenanceTeamId === 'object') {
+          teamId = (user.maintenanceTeamId as any)._id || (user.maintenanceTeamId as any).id;
+      }
       
       if (teamId) {
            fetchTeamRequests(teamId);
@@ -57,8 +58,14 @@ export const TeamTasksPage = () => {
           await maintenanceService.update(requestId, { assignedTo: user.id });
           toast.success("Task assigned to you");
           // Refresh
-          const teamId = typeof user.maintenanceTeamId === 'string' ? user.maintenanceTeamId : (user.maintenanceTeamId as any)._id;
-          fetchTeamRequests(teamId);
+          let teamId: string | undefined;
+          if (typeof user.maintenanceTeamId === 'string') {
+              teamId = user.maintenanceTeamId;
+          } else if (user.maintenanceTeamId && typeof user.maintenanceTeamId === 'object') {
+              teamId = (user.maintenanceTeamId as any)._id || (user.maintenanceTeamId as any).id;
+          }
+          
+          if (teamId) fetchTeamRequests(teamId);
       } catch (error) {
           toast.error("Failed to claim task");
       }

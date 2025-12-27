@@ -16,6 +16,8 @@ router.route("/")
   .post(createRequest)
   .get(getRequests);
 
+router.get("/dashboard-stats", getDashboardStats);
+
 router.route("/:id")
   .get(getRequestById)
   .put(updateRequest)
