@@ -1,4 +1,3 @@
-// models/MaintenanceRequest.js
 import mongoose from "mongoose";
 
 const MaintenanceRequestSchema = new mongoose.Schema(
@@ -13,7 +12,7 @@ const MaintenanceRequestSchema = new mongoose.Schema(
     requestedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true, // EMPLOYEE
+      required: true, 
       index: true,
     },
 
@@ -47,7 +46,7 @@ const MaintenanceRequestSchema = new mongoose.Schema(
     },
 
     preferredDate: {
-      type: Date, // mainly for preventive requests
+      type: Date, 
     },
 
     status: {
@@ -57,7 +56,6 @@ const MaintenanceRequestSchema = new mongoose.Schema(
       index: true,
     },
 
-    // Link to assignment (created later)
     assignmentId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "MaintenanceAssignment",
@@ -69,7 +67,6 @@ const MaintenanceRequestSchema = new mongoose.Schema(
   }
 );
 
-// Helpful indexes
 MaintenanceRequestSchema.index({ companyId: 1, status: 1 });
 MaintenanceRequestSchema.index({ requestedBy: 1, createdAt: -1 });
 
