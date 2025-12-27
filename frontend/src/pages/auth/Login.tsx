@@ -27,11 +27,11 @@ export const Login = () => {
       
       // Navigate based on role
       const rolePath = {
-        main_admin: "/dashboard",
-        company_admin: "/dashboard",
-        employee: "/dashboard",
+        main_admin: "/main-admin/dashboard",
+        company_admin: "/company-admin/dashboard",
+        employee: "/employee/dashboard",
       };
-      navigate(rolePath[response.user.role] || "/dashboard");
+      navigate(rolePath[response.user.role] || "/login");
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Login failed");
     } finally {

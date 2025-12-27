@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Company } from "@/types/company";
+import { type Company } from "@/types/company";
 import { companyService } from "@/services/company.service";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

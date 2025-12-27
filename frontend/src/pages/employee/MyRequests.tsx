@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { MaintenanceRequest } from "@/types/maintenance";
+import { type MaintenanceRequest } from "@/types/maintenance";
 import { maintenanceService } from "@/services/maintenance.service";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent } from "@/components/ui/card";

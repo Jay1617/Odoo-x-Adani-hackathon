@@ -24,6 +24,7 @@ import { EmployeeLayout } from "@/layouts/EmployeeLayout";
 import { EmployeeDashboard } from "@/pages/employee/Dashboard";
 import { MyRequestsPage } from "@/pages/employee/MyRequests";
 import { EmployeeKanbanPage } from "@/pages/employee/Kanban";
+import { useAuth } from "@/hooks/useAuth";
 
 export const AppRoutes = () => {
   return (

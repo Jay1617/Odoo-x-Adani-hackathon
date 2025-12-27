@@ -24,32 +24,29 @@ interface NavItem {
 }
 
 const getNavItems = (role: string): NavItem[] => {
-  const allItems: NavItem[] = [
-    { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-    { label: "Equipment", path: "/equipment", icon: Building2 },
-    { label: "Teams", path: "/teams", icon: Users },
-    { label: "Maintenance Requests", path: "/maintenance-requests", icon: ClipboardList },
-    { label: "Preventive Schedule", path: "/preventive-schedule", icon: Calendar },
-    { label: "Reports", path: "/reports", icon: BarChart3 },
-  ];
-
   if (role === "main_admin") {
     return [
-      { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-      { label: "Companies", path: "/companies", icon: Building2 },
-      ...allItems.slice(1),
+      { label: "Dashboard", path: "/main-admin/dashboard", icon: LayoutDashboard },
+      { label: "Companies", path: "/main-admin/companies", icon: Building2 },
     ];
   }
 
   if (role === "company_admin") {
-    return allItems;
+    return [
+      { label: "Dashboard", path: "/company-admin/dashboard", icon: LayoutDashboard },
+      { label: "Equipment", path: "/company-admin/equipment", icon: Building2 },
+      { label: "Teams", path: "/company-admin/teams", icon: Users },
+      { label: "Maintenance Requests", path: "/company-admin/maintenance-requests", icon: ClipboardList },
+      { label: "Preventive Schedule", path: "/company-admin/preventive-schedule", icon: Calendar },
+      { label: "Reports", path: "/company-admin/reports", icon: BarChart3 },
+    ];
   }
 
   // Employee
   return [
-    { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-    { label: "My Requests", path: "/my-requests", icon: FileText },
-    { label: "Kanban", path: "/kanban", icon: ClipboardList },
+    { label: "Dashboard", path: "/employee/dashboard", icon: LayoutDashboard },
+    { label: "My Requests", path: "/employee/my-requests", icon: FileText },
+    { label: "Kanban", path: "/employee/kanban", icon: ClipboardList },
   ];
 };
 
@@ -97,7 +94,7 @@ export const Sidebar = () => {
           <nav className="flex-1 space-y-1 p-4">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive = location.pathname === item.path;
+              const isActive = location.pathname === item.path || location.pathname.startsWith(item.path + "/");
               return (
                 <Link
                   key={item.path}

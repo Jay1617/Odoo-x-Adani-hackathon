@@ -1,5 +1,5 @@
 import { Draggable } from "@hello-pangea/dnd";
-import { MaintenanceRequest } from "@/types/maintenance";
+import { type MaintenanceRequest } from "@/types/maintenance";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
